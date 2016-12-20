@@ -1,6 +1,6 @@
 ## You Are Running Out Of Air (YAROOA) : A Javascript Platformer
 
-### Basic Premise
+### Basic Premise / Context For Running And Jumping
 
 You Are Running Out Of Air is a platforming game about a spaceship that has just
 been hit by an asteroid! The pilot has to get to the escape pod, but his life
@@ -13,23 +13,22 @@ support system is running out of air! Your task is to do the following:
 
 ### MVP
 
-The Player runs and jumps through a screen of platforms, collecting (X) objects
+The Player runs and jumps through a static screen of platforms, collecting (X) objects
 and reaching the end marker in (Y) time. The timer will be a restrictive as possible
 making the game a test of perfection in execution.
 
 At minimum this game will include:
-- [ ] Running and jumping on platforms
-- [ ] Objects that the player can Collect
+- [ ] A controllable player who can run and jump on platforms
+- [ ] Objects that the player can collect
+- [ ] A countdown timer that ends the game at 0
+- [ ] An exit that takes you to the next level
 - [ ] 4 to 5 levels that must be completed within a short time limit
 
 Ideally the game will also include:
-- [ ] Falling debris to dodge
-- [ ] Box2D physics for player and falling debris
+- [ ] Falling debris to dodge. Debris spawner objects that shoot junk in directions
 - [ ] Custom assets (potentially wait until week off when I have my desktop)
 
 ### Wireframes
-
-This app will consist of a single screen with game board, game controls, and nav links to the Github, my
 
 ![wireframes](https://raw.githubusercontent.com/mincer-ray/jsgame/master/Screen%20Shot%202016-12-19%20at%2010.41.07%20PM.png)
 
@@ -73,3 +72,4 @@ Add more levels. Add falling hazard objects if time allows:
 - Make game lose if timer hits 0
 - Add next level if won
 - Add levels by creating more tile maps
+- Different gravity for different levels would be neat
