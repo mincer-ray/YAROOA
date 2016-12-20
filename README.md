@@ -31,7 +31,7 @@ Ideally the game will also include:
 
 This app will consist of a single screen with game board, game controls, and nav links to the Github, my
 
-![wireframes](https://github.com/appacademy/ny-portfolio-curriculum/blob/master/javascript-project/js-proposal-wireframe.jpg)
+![wireframes](https://raw.githubusercontent.com/mincer-ray/jsgame/master/Screen%20Shot%202016-12-19%20at%2010.41.07%20PM.png)
 
 ### Technologies
 
