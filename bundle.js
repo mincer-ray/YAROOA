@@ -286,8 +286,8 @@
 	  }
 	
 	  drawPlayer (pos) {
-	    this.player.x = pos.x - 16;
-	    this.player.y = pos.y - 16;
+	    this.player.x = pos.x - 17;
+	    this.player.y = pos.y - 17;
 	  }
 	
 	  drawPickups (newPickups) {
@@ -330,7 +330,7 @@
 	    this.tileSize = 64;
 	    this.engine = Engine.create();
 	    this.render = Render.create({
-	      element: document.getElementById("collision"),
+	      element: document.getElementById("gameArea"),
 	      engine: this.engine
 	    });
 	    this.engine.world.gravity = { x:0, y:0.5 };
