@@ -87,7 +87,6 @@
 	    this.map = {};
 	
 	    this.updater = this.updater.bind(this);
-	    this.controller = new Controller;
 	  }
 	
 	  changeLevel (map) {
@@ -96,6 +95,7 @@
 	
 	  initLevel () {
 	    this.collider = new Collision(this.map.collision);
+	    this.controller = new Controller(this.collider);
 	    this.render.drawMap(this.map);
 	    this.render.update();
 	    this.collider.populateWorld();
@@ -105,7 +105,6 @@
 	
 	  updater () {
 	    this.render.drawPlayer(this.collider.playerPos());
-	    this.collider.movePlayer(this.controller.getLastKey());
 	  }
 	
 	  runUpdater () {
@@ -230,11 +229,11 @@
 	  dir (dir) {
 	    switch (dir) {
 	      case "left":
-	        return { x:-1, y:this.player.velocity.y };
+	        return { x:-2, y:this.player.velocity.y };
 	      case "right":
-	        return { x:1, y:this.player.velocity.y };
+	        return { x:2, y:this.player.velocity.y };
 	      case "up":
-	        return { x:this.player.velocity.x, y:-1 };
+	        return { x:this.player.velocity.x, y:-5 };
 	      case "down":
 	        return { x:this.player.velocity.x, y:1 };
 	    }
@@ -9545,19 +9544,15 @@
 /***/ function(module, exports) {
 
 	class Controller {
-	  constructor () {
+	  constructor (collider) {
+	    this.collider = collider;
 	    $(window).on("keydown", this.handleKeyEvent.bind(this));
-	    this.lastKey = "";
 	  }
 	
 	  handleKeyEvent(event) {
 	    if (Controller.KEYS[event.keyCode]) {
-	      this.lastKey = Controller.KEYS[event.keyCode];
+	      this.collider.movePlayer(Controller.KEYS[event.keyCode]);
 	    }
-	  }
-	
-	  getLastKey () {
-	    return this.lastKey;
 	  }
 	}
 	
