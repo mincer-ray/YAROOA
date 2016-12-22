@@ -48,28 +48,64 @@
 	
 	$(() => {
 	  const map1 = {
-	    cols: 4,
+	    cols: 6,
 	    rows: 4,
 	    tiles: [
-	      [1, 1, 1, 1],
-	      [1, 99, 99, 1],
-	      [0, 99, 99, 0],
-	      [2, 2, 2, 2]
+	      [1, 1, 1, 1, 1, 1],
+	      [1, 9, 9, 9, 9, 1],
+	      [0, 9, 9, 4, 9, 0],
+	      [2, 2, 2, 2, 2, 2]
 	    ],
 	    collision: [
-	      [1, 1, 1, 1],
-	      [1, 0, 0, 1],
-	      [2, 0, 0, 2],
-	      [1, 1, 1, 1]
+	      [1, 1, 1, 1, 1, 1],
+	      [1, 0, 0, 2, 0, 1],
+	      [2, 0, 0, 3, 0, 2],
+	      [1, 1, 1, 1, 1, 1]
+	    ]
+	  };
+	
+	  const map3 = {
+	    cols: 6,
+	    rows: 4,
+	    tiles: [
+	      [1, 1, 1, 1, 1, 1],
+	      [1, 9, 9, 0, 4, 1],
+	      [1, 9, 9, 9, 9, 1],
+	      [2, 2, 2, 2, 2, 2]
+	    ],
+	    collision: [
+	      [1, 1, 1, 1, 1, 1],
+	      [1, 0, 0, 2, 3, 1],
+	      [1, 0, 0, 0, 0, 1],
+	      [1, 1, 1, 1, 1, 1]
+	    ]
+	  };
+	
+	  const map2 = {
+	    cols: 6,
+	    rows: 4,
+	    tiles: [
+	      [1, 1, 1, 1, 1, 1],
+	      [1, 9, 9, 0, 4, 1],
+	      [1, 0, 9, 9, 9, 1],
+	      [2, 2, 2, 2, 0, 2]
+	    ],
+	    collision: [
+	      [1, 1, 1, 1, 1, 1],
+	      [1, 0, 0, 2, 3, 1],
+	      [1, 2, 0, 0, 0, 1],
+	      [1, 1, 1, 1, 2, 1]
 	    ]
 	  };
 	
 	  const game = new Game;
-	
-	  game.changeLevel(map1);
-	  game.initLevel();
-	
-	  game.runUpdater();
+	  game.addLevel(map1);
+	  game.addLevel(map2);
+	  game.addLevel(map3);
+	  game.addLevel(map1);
+	  game.addLevel(map2);
+	  game.addLevel(map3);
+	  game.play();
 	});
 
 
@@ -84,19 +120,31 @@
 	class Game {
 	  constructor () {
 	    this.render = new Render;
-	    this.map = {};
+	    this.levelComplete = false;
+	    this.mapList = [];
 	
 	    this.updater = this.updater.bind(this);
 	  }
 	
-	  changeLevel (map) {
-	    this.map = map;
+	  play () {
+	    this.nextLevel();
 	  }
 	
-	  initLevel () {
-	    this.collider = new Collision(this.map.collision);
+	  addLevel (map) {
+	    this.mapList.push(map);
+	  }
+	
+	  nextLevel () {
+	    this.collider = new Collision();
 	    this.controller = new Controller(this.collider);
-	    this.render.drawMap(this.map);
+	    this.render.clear();
+	    this.initLevel(this.mapList.shift());
+	    this.runUpdater();
+	  }
+	
+	  initLevel (map) {
+	    this.collider.update(map.collision);
+	    this.render.drawMap(map);
 	    this.render.update();
 	    this.collider.populateWorld();
 	    this.collider.runEngine();
@@ -106,10 +154,37 @@
 	  updater () {
 	    this.render.drawPlayer(this.collider.playerPos());
 	    this.render.drawPickups(this.collider.pickupPos());
+	    this.checkPickups(this.collider.pickupPos());
+	    this.checkLevelEnd();
+	    if (this.levelComplete) {
+	      window.clearInterval(this.interval);
+	      this.levelComplete = false;
+	      this.nextLevel();
+	    }
+	  }
+	
+	  checkPickups (pickups) {
+	    if (pickups.length === 0) {
+	      this.allPickupsCollected = true;
+	    }
+	  }
+	
+	  checkLevelEnd () {
+	    if (this.allPickupsCollected) {
+	      this.allPickupsCollected = false;
+	      this.collider.activateExit();
+	    }
+	    if (this.collider.levelComplete) {
+	      this.levelComplete = true;
+	    }
+	  }
+	
+	  levelComplete () {
+	    this.levelComplete;
 	  }
 	
 	  runUpdater () {
-	    let interval = window.setInterval(this.updater, 1);
+	    this.interval = window.setInterval(this.updater, 1);
 	  }
 	}
 	
@@ -131,12 +206,14 @@
 	    this.tiles.push({ x:64, y:0, width:this.tileSize, height:this.tileSize });
 	    this.tiles.push({ x:0, y:64, width:this.tileSize, height:this.tileSize });
 	    this.tiles.push({ x:0, y:0, width:10, height:10 });
-	
-	    this.player = new createjs.Bitmap("./assets/tileatlas.png");
-	    this.player.sourceRect = { x:0, y:0, width:32, height:32 };
-	    this.stage.addChild(this.player);
+	    this.tiles.push({ x:64, y:64, width:this.tileSize, height:this.tileSize });
 	
 	    createjs.Ticker.on("tick", this.stage);
+	  }
+	
+	  clear () {
+	    this.stage.clear();
+	    this.stage.removeAllChildren();
 	  }
 	
 	  getTile(map, x, y) {
@@ -165,12 +242,15 @@
 	    for (let col = 0; col < map.cols; col++) {
 	      for (let row = 0; row < map.rows; row++) {
 	        let currentTile = this.getTile(map.tiles, row, col);
-	        if (currentTile === 99) {
+	        if (currentTile === 9) {
 	        } else {
 	          this.drawTile(currentTile, col, row);
 	        }
 	      }
 	    }
+	    this.player = new createjs.Bitmap("./assets/tileatlas.png");
+	    this.player.sourceRect = { x:0, y:0, width:32, height:32 };
+	    this.stage.addChild(this.player);
 	  }
 	
 	  drawPlayer (pos) {
@@ -210,24 +290,26 @@
 	const Bodies = Matter.Bodies;
 	
 	class Collision {
-	  constructor (collisionMap) {
-	    this.map = collisionMap;
+	  constructor () {
 	    this.tileSize = 64;
-	    this.boxes = [];
 	    this.engine = Engine.create();
 	    this.render = Render.create({
-	      element: document.getElementById("collision"),
+	      element: document.getElementById("gameArea"),
 	      engine: this.engine
 	    });
-	
 	    this.engine.world.gravity = { x:0, y:0.5 };
+	    Matter.Events.on(this.engine, "collisionStart", this.handleCollision.bind(this));
+	  }
 	
+	  update (map) {
+	    this.map = map;
+	    this.exitActive = false;
+	    this.levelComplete = false;
+	    this.boxes = [];
 	    this.player = Bodies.rectangle(100, 100, 32, 32, { inertia: Infinity, friction: 0.9 });
 	    Matter.Body.setMass(this.player, 100);
-	
 	    this.boxes.push(this.player);
 	    this.createHitBoxes();
-	    Matter.Events.on(this.engine, "collisionStart", this.handleCollision.bind(this));
 	  }
 	
 	  createHitBoxes () {
@@ -235,32 +317,63 @@
 	      for (let row = 0; row < this.map[0].length; row++) {
 	        let currentTile = this.map[col][row];
 	        if (currentTile === 1) {
-	          this.boxes.push(
-	            Bodies.rectangle(
-	              (row * this.tileSize) + this.tileSize/2 + 1,
-	              (col * this.tileSize) + this.tileSize/2 + 1,
-	              this.tileSize,
-	              this.tileSize,
-	              { isStatic: true }
-	            )
-	          );
+	          this.boxes.push(this.createBox(row, col));
 	        } else if (currentTile === 2) {
-	          let pickup = Bodies.rectangle(
-	            (row * this.tileSize) + this.tileSize/2 + 1,
-	            (col * this.tileSize) + this.tileSize/2 + 1,
-	            10,
-	            10,
-	            { isStatic: true, label: "pickup", isSensor: true }
-	          );
+	          let pickup = this.createPickup(row, col);
 	          this.boxes.push(pickup);
+	        } else if (currentTile === 3) {
+	          this.boxes.push(this.createExit(row, col));
 	        }
 	      }
 	    }
 	  }
 	
+	  createBox (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 + 1,
+	        this.tileSize,
+	        this.tileSize,
+	        { isStatic: true }
+	      )
+	    );
+	  }
+	
+	  createPickup (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 + 1,
+	        10,
+	        10,
+	        { isStatic: true, label: "pickup", isSensor: true }
+	      )
+	    );
+	  }
+	
+	  createExit (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 + 1,
+	        this.tileSize,
+	        this.tileSize,
+	        { isStatic: true, label: "exit", isSensor: true }
+	      )
+	    );
+	  }
+	
+	  activateExit () {
+	    this.exitActive = true;
+	  }
+	
 	  handleCollision (event) {
 	    if (event.pairs[0].bodyB.label === "pickup") {
 	      Matter.Composite.remove(this.engine.world, event.pairs[0].bodyB);
+	    } else if (event.pairs[0].bodyB.label === "exit" && this.exitActive) {
+	      Matter.Composite.clear(this.engine.world);
+	      this.levelComplete = true;
 	    }
 	  }
 	
