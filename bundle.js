@@ -114,6 +114,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Render = __webpack_require__(2);
+	const Timer = __webpack_require__(7);
 	const Collision = __webpack_require__(3);
 	const Controller = __webpack_require__(5);
 	
@@ -122,6 +123,9 @@
 	    this.render = new Render;
 	    this.levelComplete = false;
 	    this.mapList = [];
+	    this.timer = new Timer;
+	
+	    this.clockInterval = window.setInterval(this.clock.bind(this), 10);
 	
 	    this.updater = this.updater.bind(this);
 	  }
@@ -161,6 +165,7 @@
 	      this.levelComplete = false;
 	      this.nextLevel();
 	    }
+	    requestAnimationFrame(this.updater.bind(this));
 	  }
 	
 	  checkPickups (pickups) {
@@ -184,7 +189,13 @@
 	  }
 	
 	  runUpdater () {
-	    this.interval = window.setInterval(this.updater, 1);
+	    requestAnimationFrame(this.updater.bind(this));
+	    // this.interval = window.setInterval(this.updater, 1);
+	  }
+	
+	  clock () {
+	    this.timer.tick();
+	    this.render.updateTime(this.timer.time());
 	  }
 	}
 	
@@ -220,11 +231,12 @@
 	      animations: {
 	        spin: {
 	          frames: [0, 1, 2, 3],
-	          speed: 0.4
+	          speed: 0.1
 	        }
 	      }
 	    });
 	
+	    createjs.Ticker.framerate = 60;
 	    createjs.Ticker.on("tick", this.stage);
 	  }
 	
@@ -268,6 +280,9 @@
 	    this.player = new createjs.Bitmap("./assets/tileatlas.png");
 	    this.player.sourceRect = { x:0, y:0, width:32, height:32 };
 	    this.stage.addChild(this.player);
+	    this.text = new createjs.Text('00:00', "16px Arial", "#ffffff");
+	    this.stage.setChildIndex(this.text, this.stage.getNumChildren()-1);
+	    this.stage.addChild(this.text);
 	  }
 	
 	  drawPlayer (pos) {
@@ -290,6 +305,10 @@
 	
 	  update () {
 	    this.stage.update();
+	  }
+	
+	  updateTime (time) {
+	    this.text.text = time;
 	  }
 	}
 	
@@ -9748,6 +9767,42 @@
 	};
 	
 	module.exports = Controller;
+
+
+/***/ },
+/* 6 */,
+/* 7 */
+/***/ function(module, exports) {
+
+	class Timer {
+	  constructor () {
+	    this.seconds = 0;
+	  }
+	
+	  time () {
+	    let minutes = Math.floor(this.seconds / 100);
+	    let seconds = this.seconds % 100;
+	    return(`${this.pad(minutes)}:${this.pad(seconds)}`);
+	  }
+	
+	  pad (num) {
+	    if (num >= 10) {
+	      return `${num}`;
+	    } else {
+	      return `0${num}`;
+	    }
+	  }
+	
+	  tick () {
+	    this.seconds += 1;
+	  }
+	
+	  reset () {
+	    this.seconds = 0;
+	  }
+	}
+	
+	module.exports = Timer;
 
 
 /***/ }
