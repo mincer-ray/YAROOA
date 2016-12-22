@@ -44,48 +44,80 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Render = __webpack_require__(1);
-	const Collision = __webpack_require__(2);
-	
-	const map1 = {
-	  cols: 4,
-	  rows: 4,
-	  tiles: [
-	    [1, 1, 1, 1],
-	    [1, 99, 99, 1],
-	    [1, 99, 99, 1],
-	    [2, 2, 2, 2]
-	  ],
-	  collision: [
-	    [1, 1, 1, 1],
-	    [1, 0, 0, 1],
-	    [1, 0, 0, 1],
-	    [1, 1, 1, 1]
-	  ]
-	};
+	const Game = __webpack_require__(1);
 	
 	$(() => {
-	  const render = new Render;
-	  const collisionMap = new Collision(map1.collision);
-	
-	  render.drawMap(map1);
-	  render.update();
-	  collisionMap.populateWorld();
-	  collisionMap.runEngine();
-	  collisionMap.renderCollision();
-	  // collisionMap.movePlayer("right");
-	
-	  const updater = () => {
-	    render.drawPlayer(collisionMap.playerPos());
+	  const map1 = {
+	    cols: 4,
+	    rows: 4,
+	    tiles: [
+	      [1, 1, 1, 1],
+	      [1, 99, 99, 1],
+	      [1, 99, 99, 99],
+	      [2, 2, 2, 2]
+	    ],
+	    collision: [
+	      [1, 1, 1, 1],
+	      [1, 0, 0, 1],
+	      [1, 0, 0, 0],
+	      [1, 1, 1, 1]
+	    ]
 	  };
 	
+	  const game = new Game;
 	
-	  let interval = window.setInterval(updater, 1);
+	  game.changeLevel(map1);
+	  game.initLevel();
+	
+	  game.runUpdater();
 	});
 
 
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const Render = __webpack_require__(2);
+	const Collision = __webpack_require__(3);
+	const Controller = __webpack_require__(5);
+	
+	class Game {
+	  constructor () {
+	    this.render = new Render;
+	    this.map = {};
+	
+	    this.updater = this.updater.bind(this);
+	    this.controller = new Controller;
+	  }
+	
+	  changeLevel (map) {
+	    this.map = map;
+	  }
+	
+	  initLevel () {
+	    this.collider = new Collision(this.map.collision);
+	    this.render.drawMap(this.map);
+	    this.render.update();
+	    this.collider.populateWorld();
+	    this.collider.runEngine();
+	    this.collider.renderCollision();
+	  }
+	
+	  updater () {
+	    this.render.drawPlayer(this.collider.playerPos());
+	    this.collider.movePlayer(this.controller.getLastKey());
+	  }
+	
+	  runUpdater () {
+	    let interval = window.setInterval(this.updater, 1);
+	  }
+	}
+	
+	module.exports = Game;
+
+
+/***/ },
+/* 2 */
 /***/ function(module, exports) {
 
 	class Render {
@@ -143,10 +175,10 @@
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Matter = __webpack_require__(3);
+	const Matter = __webpack_require__(4);
 	const Engine = Matter.Engine;
 	const Render = Matter.Render;
 	const World = Matter.World;
@@ -163,18 +195,13 @@
 	      engine: this.engine
 	    });
 	
-	    this.player = Bodies.rectangle(100, 100, 32, 32);
+	    this.engine.world.gravity = { x:0, y:0.5 };
+	
+	    this.player = Bodies.rectangle(100, 100, 32, 32, { inertia: Infinity, friction: 0.9 });
+	    Matter.Body.setMass(this.player, 100);
 	
 	    this.boxes.push(this.player);
 	    this.createHitBoxes();
-	  }
-	
-	  drawSolidBox (num, x, y) {
-	    let currentTile = new createjs.Bitmap("./assets/tileatlas.png");
-	    currentTile.x = x * this.tileSize;
-	    currentTile.y = y * this.tileSize;
-	    currentTile.sourceRect = this.tiles[num];
-	    this.stage.addChild(currentTile);
 	  }
 	
 	  createHitBoxes () {
@@ -203,17 +230,18 @@
 	  dir (dir) {
 	    switch (dir) {
 	      case "left":
-	        return 180;
+	        return { x:-1, y:this.player.velocity.y };
 	      case "right":
-	        return 0;
-	      default:
-	        return state;
+	        return { x:1, y:this.player.velocity.y };
+	      case "up":
+	        return { x:this.player.velocity.x, y:-1 };
+	      case "down":
+	        return { x:this.player.velocity.x, y:1 };
 	    }
 	  }
 	
 	  movePlayer (dir) {
-	    Matter.Body.setAngle(this.player, this.dir(dir));
-	    Matter.Body.setAngularVelocity(this.player, 0.5);
+	    Matter.Body.setVelocity(this.player, this.dir(dir));
 	  }
 	
 	  populateWorld () {
@@ -233,7 +261,7 @@
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var require;var require;/**
@@ -9511,6 +9539,37 @@
 	
 	},{"../body/Composite":2,"../core/Common":14}]},{},[28])(28)
 	});
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	class Controller {
+	  constructor () {
+	    $(window).on("keydown", this.handleKeyEvent.bind(this));
+	    this.lastKey = "";
+	  }
+	
+	  handleKeyEvent(event) {
+	    if (Controller.KEYS[event.keyCode]) {
+	      this.lastKey = Controller.KEYS[event.keyCode];
+	    }
+	  }
+	
+	  getLastKey () {
+	    return this.lastKey;
+	  }
+	}
+	
+	Controller.KEYS = {
+	  37: "left",
+	  38: "up",
+	  39: "right",
+	  40: "down",
+	};
+	
+	module.exports = Controller;
+
 
 /***/ }
 /******/ ]);
