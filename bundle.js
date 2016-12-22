@@ -53,13 +53,13 @@
 	    tiles: [
 	      [1, 1, 1, 1],
 	      [1, 99, 99, 1],
-	      [1, 99, 99, 99],
+	      [0, 99, 99, 0],
 	      [2, 2, 2, 2]
 	    ],
 	    collision: [
 	      [1, 1, 1, 1],
 	      [1, 0, 0, 1],
-	      [1, 0, 0, 0],
+	      [2, 0, 0, 2],
 	      [1, 1, 1, 1]
 	    ]
 	  };
@@ -105,6 +105,7 @@
 	
 	  updater () {
 	    this.render.drawPlayer(this.collider.playerPos());
+	    this.render.drawPickups(this.collider.pickupPos());
 	  }
 	
 	  runUpdater () {
@@ -124,10 +125,12 @@
 	    this.stage = new createjs.Stage("gameArea");
 	    this.tileSize = 64;
 	    this.tiles = [];
+	    this.pickups = [];
 	
 	    this.tiles.push({ x:0, y:0, width:this.tileSize, height:this.tileSize });
 	    this.tiles.push({ x:64, y:0, width:this.tileSize, height:this.tileSize });
 	    this.tiles.push({ x:0, y:64, width:this.tileSize, height:this.tileSize });
+	    this.tiles.push({ x:0, y:0, width:10, height:10 });
 	
 	    this.player = new createjs.Bitmap("./assets/tileatlas.png");
 	    this.player.sourceRect = { x:0, y:0, width:32, height:32 };
@@ -145,10 +148,20 @@
 	    currentTile.x = x * this.tileSize;
 	    currentTile.y = y * this.tileSize;
 	    currentTile.sourceRect = this.tiles[num];
+	    if (num === 0) this.pickups.push(currentTile);
 	    this.stage.addChild(currentTile);
 	  }
 	
-	  drawMap (map) {
+	  updateTile (num, x, y) {
+	    let currentTile = new createjs.Bitmap("./assets/tileatlas.png");
+	    currentTile.x = x;
+	    currentTile.y = y;
+	    currentTile.sourceRect = this.tiles[num];
+	    if (num === 0) this.pickups.push(currentTile);
+	    this.stage.addChild(currentTile);
+	  }
+	
+	  drawMap (map, pickups) {
 	    for (let col = 0; col < map.cols; col++) {
 	      for (let row = 0; row < map.rows; row++) {
 	        let currentTile = this.getTile(map.tiles, row, col);
@@ -163,6 +176,19 @@
 	  drawPlayer (pos) {
 	    this.player.x = pos.x - 16;
 	    this.player.y = pos.y - 16;
+	  }
+	
+	  drawPickups (newPickups) {
+	    if (this.pickups.length != newPickups.length) {
+	      this.pickups.forEach(pickup => {
+	        this.stage.removeChild(pickup);
+	      });
+	      this.pickups = [];
+	      newPickups.forEach(pickup => {
+	        this.updateTile(0, pickup.x - 33, pickup.y - 33);
+	      });
+	      this.stage.update();
+	    }
 	  }
 	
 	  update () {
@@ -201,6 +227,7 @@
 	
 	    this.boxes.push(this.player);
 	    this.createHitBoxes();
+	    Matter.Events.on(this.engine, "collisionStart", this.handleCollision.bind(this));
 	  }
 	
 	  createHitBoxes () {
@@ -217,8 +244,23 @@
 	              { isStatic: true }
 	            )
 	          );
+	        } else if (currentTile === 2) {
+	          let pickup = Bodies.rectangle(
+	            (row * this.tileSize) + this.tileSize/2 + 1,
+	            (col * this.tileSize) + this.tileSize/2 + 1,
+	            10,
+	            10,
+	            { isStatic: true, label: "pickup", isSensor: true }
+	          );
+	          this.boxes.push(pickup);
 	        }
 	      }
+	    }
+	  }
+	
+	  handleCollision (event) {
+	    if (event.pairs[0].bodyB.label === "pickup") {
+	      Matter.Composite.remove(this.engine.world, event.pairs[0].bodyB);
 	    }
 	  }
 	
@@ -226,12 +268,24 @@
 	    return this.player.position;
 	  }
 	
+	  pickupPos () {
+	    let pickups = [];
+	
+	    Matter.Composite.allBodies(this.engine.world).forEach(body => {
+	      if (body.label === "pickup") {
+	        pickups.push(body.position);
+	      }
+	    });
+	
+	    return pickups;
+	  }
+	
 	  dir (dir) {
 	    switch (dir) {
 	      case "left":
-	        return { x:-2, y:this.player.velocity.y };
+	        return { x:-4, y:this.player.velocity.y };
 	      case "right":
-	        return { x:2, y:this.player.velocity.y };
+	        return { x:4, y:this.player.velocity.y };
 	      case "up":
 	        return { x:this.player.velocity.x, y:-5 };
 	      case "down":
