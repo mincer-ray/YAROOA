@@ -52,7 +52,7 @@
 	    rows: 4,
 	    tiles: [
 	      [1, 1, 1, 1, 1, 1],
-	      [1, 9, 9, 9, 9, 1],
+	      [1, 9, 9, 0, 9, 1],
 	      [0, 9, 9, 4, 9, 0],
 	      [2, 2, 2, 2, 2, 2]
 	    ],
@@ -208,6 +208,23 @@
 	    this.tiles.push({ x:0, y:0, width:10, height:10 });
 	    this.tiles.push({ x:64, y:64, width:this.tileSize, height:this.tileSize });
 	
+	    this.coin = new createjs.SpriteSheet({
+	      images: ["./assets/items.png"],
+	      frames: [
+	        // [0, 0, 20, 20, 0, 0]
+	        [96, 80, 16, 16, 0, 8],
+	        [115, 80, 10, 16, 0, 5],
+	        [134, 80, 4, 16, 0, 2],
+	        [147, 80, 10, 16, 0, 5]
+	      ],
+	      animations: {
+	        spin: {
+	          frames: [0, 1, 2, 3],
+	          speed: 0.4
+	        }
+	      }
+	    });
+	
 	    createjs.Ticker.on("tick", this.stage);
 	  }
 	
@@ -225,24 +242,24 @@
 	    currentTile.x = x * this.tileSize;
 	    currentTile.y = y * this.tileSize;
 	    currentTile.sourceRect = this.tiles[num];
-	    if (num === 0) this.pickups.push(currentTile);
+	    // if (num === 0) this.pickups.push(currentTile);
 	    this.stage.addChild(currentTile);
 	  }
 	
-	  updateTile (num, x, y) {
-	    let currentTile = new createjs.Bitmap("./assets/tileatlas.png");
-	    currentTile.x = x;
-	    currentTile.y = y;
-	    currentTile.sourceRect = this.tiles[num];
-	    if (num === 0) this.pickups.push(currentTile);
-	    this.stage.addChild(currentTile);
+	  addPickup (x, y) {
+	    let pickup = new createjs.Sprite(this.coin);
+	    pickup.x = x;
+	    pickup.y = y;
+	    this.pickups.push(pickup);
+	    pickup.gotoAndPlay("spin");
+	    this.stage.addChild(pickup);
 	  }
 	
 	  drawMap (map, pickups) {
 	    for (let col = 0; col < map.cols; col++) {
 	      for (let row = 0; row < map.rows; row++) {
 	        let currentTile = this.getTile(map.tiles, row, col);
-	        if (currentTile === 9) {
+	        if (currentTile === 9 || currentTile === 0) {
 	        } else {
 	          this.drawTile(currentTile, col, row);
 	        }
@@ -265,7 +282,7 @@
 	      });
 	      this.pickups = [];
 	      newPickups.forEach(pickup => {
-	        this.updateTile(0, pickup.x - 33, pickup.y - 33);
+	        this.addPickup(pickup.x, pickup.y-10);
 	      });
 	      this.stage.update();
 	    }
@@ -294,7 +311,7 @@
 	    this.tileSize = 64;
 	    this.engine = Engine.create();
 	    this.render = Render.create({
-	      element: document.getElementById("gameArea"),
+	      element: document.getElementById("collision"),
 	      engine: this.engine
 	    });
 	    this.engine.world.gravity = { x:0, y:0.5 };
