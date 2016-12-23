@@ -256,7 +256,7 @@
 	    this.tiles.push({ x:32, y:32, width:this.tileSize, height:this.tileSize });
 	
 	    this.coin = new createjs.SpriteSheet({
-	      images: ["./assets/Items.png"],
+	      images: ["./assets/coin.png"],
 	      frames: [
 	        // [0, 0, 20, 20, 0, 0]
 	        [96, 80, 16, 16, 0, 8],
