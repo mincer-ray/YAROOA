@@ -48,63 +48,96 @@
 	
 	$(() => {
 	  const map1 = {
-	    cols: 6,
-	    rows: 4,
+	    cols: 16,
+	    rows: 10,
 	    tiles: [
-	      [1, 1, 1, 1, 1, 1],
-	      [1, 9, 9, 0, 9, 1],
-	      [0, 9, 9, 4, 9, 0],
-	      [2, 2, 2, 2, 2, 2]
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 	    ],
 	    collision: [
-	      [1, 1, 1, 1, 1, 1],
-	      [1, 0, 0, 2, 0, 1],
-	      [2, 0, 0, 3, 0, 2],
-	      [1, 1, 1, 1, 1, 1]
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 4, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 2, 4, 0, 1],
+	      [1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 9, 1, 9, 9, 1, 9, 1, 9, 1, 9, 1, 9, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 9, 9, 1, 9, 1, 9, 9, 9, 1, 9, 9, 1, 1],
+	      [1, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 4, 4, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1],
+	      [1, 1, 9, 9, 9, 1, 9, 1, 9, 1, 9, 9, 9, 9, 1, 1]
 	    ]
 	  };
 	
 	  const map3 = {
-	    cols: 6,
-	    rows: 4,
+	    cols: 16,
+	    rows: 10,
 	    tiles: [
-	      [1, 1, 1, 1, 1, 1],
-	      [1, 9, 9, 0, 4, 1],
-	      [1, 9, 9, 9, 9, 1],
-	      [2, 2, 2, 2, 2, 2]
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+	      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+	      [2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 	    ],
 	    collision: [
-	      [1, 1, 1, 1, 1, 1],
-	      [1, 0, 0, 2, 3, 1],
-	      [1, 0, 0, 0, 0, 1],
-	      [1, 1, 1, 1, 1, 1]
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 0, 0, 0, 0, 0, 2, 0, 0, 4, 1, 0, 0, 0, 3, 1],
+	      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1],
+	      [1, 2, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 2, 0, 1, 0, 1, 1, 1, 0, 0, 2, 0, 0, 0, 1],
+	      [1, 1, 1, 1, 1, 9, 1, 1, 1, 9, 9, 9, 1, 1, 1, 1]
 	    ]
 	  };
 	
 	  const map2 = {
-	    cols: 6,
-	    rows: 4,
+	    cols: 16,
+	    rows: 10,
 	    tiles: [
-	      [1, 1, 1, 1, 1, 1],
-	      [1, 9, 9, 0, 4, 1],
-	      [1, 0, 9, 9, 9, 1],
-	      [2, 2, 2, 2, 0, 2]
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 4, 1],
+	      [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 	    ],
 	    collision: [
-	      [1, 1, 1, 1, 1, 1],
-	      [1, 0, 0, 2, 3, 1],
-	      [1, 2, 0, 0, 0, 1],
-	      [1, 1, 1, 1, 2, 1]
-	    ]
+	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 1, 0, 9, 4, 9, 1, 1, 0, 0, 2, 0, 0, 3, 1],
+	      [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+	      [1, 0, 1, 1, 9, 0, 9, 0, 0, 2, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	      [1, 0, 0, 0, 1, 2, 1, 2, 1, 2, 1, 0, 0, 0, 0, 1],
+	      [1, 1, 1, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+	    ],
 	  };
 	
 	  const game = new Game;
-	  game.addLevel(map1);
 	  game.addLevel(map2);
 	  game.addLevel(map3);
 	  game.addLevel(map1);
-	  game.addLevel(map2);
-	  game.addLevel(map3);
 	  game.play();
 	});
 
@@ -114,9 +147,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Render = __webpack_require__(2);
-	const Timer = __webpack_require__(7);
-	const Collision = __webpack_require__(3);
-	const Controller = __webpack_require__(5);
+	const Timer = __webpack_require__(3);
+	const Collision = __webpack_require__(4);
+	const Controller = __webpack_require__(6);
 	
 	class Game {
 	  constructor () {
@@ -153,11 +186,13 @@
 	    this.collider.populateWorld();
 	    this.collider.runEngine();
 	    this.collider.renderCollision();
+	    window.setInterval(this.collider.spawnDebris.bind(this), 10);
 	  }
 	
 	  updater () {
 	    this.render.drawPlayer(this.collider.playerPos());
 	    this.render.drawPickups(this.collider.pickupPos());
+	    this.render.drawDebris(this.collider.debrisPos());
 	    this.checkPickups(this.collider.pickupPos());
 	    this.checkLevelEnd();
 	    if (this.levelComplete) {
@@ -209,15 +244,16 @@
 	class Render {
 	  constructor () {
 	    this.stage = new createjs.Stage("gameArea");
-	    this.tileSize = 64;
+	    this.tileSize = 32;
 	    this.tiles = [];
 	    this.pickups = [];
+	    this.debris = [];
 	
 	    this.tiles.push({ x:0, y:0, width:this.tileSize, height:this.tileSize });
-	    this.tiles.push({ x:64, y:0, width:this.tileSize, height:this.tileSize });
-	    this.tiles.push({ x:0, y:64, width:this.tileSize, height:this.tileSize });
+	    this.tiles.push({ x:32, y:0, width:this.tileSize, height:this.tileSize });
+	    this.tiles.push({ x:0, y:32, width:this.tileSize, height:this.tileSize });
 	    this.tiles.push({ x:0, y:0, width:10, height:10 });
-	    this.tiles.push({ x:64, y:64, width:this.tileSize, height:this.tileSize });
+	    this.tiles.push({ x:32, y:32, width:this.tileSize, height:this.tileSize });
 	
 	    this.coin = new createjs.SpriteSheet({
 	      images: ["./assets/items.png"],
@@ -267,6 +303,15 @@
 	    this.stage.addChild(pickup);
 	  }
 	
+	  addDebris (x, y) {
+	    let debris = new createjs.Bitmap("./assets/blue.jpg");
+	    debris.x = x;
+	    debris.y = y;
+	    debris.sourceRect = this.tiles[3];
+	    this.debris.push(debris);
+	    this.stage.addChild(debris);
+	  }
+	
 	  drawMap (map, pickups) {
 	    for (let col = 0; col < map.cols; col++) {
 	      for (let row = 0; row < map.rows; row++) {
@@ -277,8 +322,8 @@
 	        }
 	      }
 	    }
-	    this.player = new createjs.Bitmap("./assets/tileatlas.png");
-	    this.player.sourceRect = { x:0, y:0, width:32, height:32 };
+	    this.player = new createjs.Bitmap("./assets/red.jpg");
+	    this.player.sourceRect = { x:0, y:0, width:16, height:16 };
 	    this.stage.addChild(this.player);
 	    this.text = new createjs.Text('00:00', "16px Arial", "#ffffff");
 	    this.stage.setChildIndex(this.text, this.stage.getNumChildren()-1);
@@ -286,8 +331,8 @@
 	  }
 	
 	  drawPlayer (pos) {
-	    this.player.x = pos.x - 17;
-	    this.player.y = pos.y - 17;
+	    this.player.x = pos.x - 9;
+	    this.player.y = pos.y - 9;
 	  }
 	
 	  drawPickups (newPickups) {
@@ -300,6 +345,24 @@
 	        this.addPickup(pickup.x, pickup.y-10);
 	      });
 	      this.stage.update();
+	    }
+	  }
+	
+	  drawDebris (newDebris) {
+	    if (this.debris.length != newDebris.length) {
+	      this.debris.forEach(debris => {
+	        this.stage.removeChild(debris);
+	      });
+	      this.debris = [];
+	      newDebris.forEach(piece => {
+	        this.addDebris(piece.x - 6, piece.y - 5);
+	      });
+	      this.stage.update();
+	    }
+	
+	    for (let i = 0 ; i < newDebris.length ; i++) {
+	      this.debris[i].x = newDebris[i].x - 6;
+	      this.debris[i].y = newDebris[i].y - 5;
 	    }
 	  }
 	
@@ -317,9 +380,44 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	class Timer {
+	  constructor () {
+	    this.seconds = 0;
+	  }
+	
+	  time () {
+	    let minutes = Math.floor(this.seconds / 100);
+	    let seconds = this.seconds % 100;
+	    return(`${this.pad(minutes)}:${this.pad(seconds)}`);
+	  }
+	
+	  pad (num) {
+	    if (num >= 10) {
+	      return `${num}`;
+	    } else {
+	      return `0${num}`;
+	    }
+	  }
+	
+	  tick () {
+	    this.seconds += 1;
+	  }
+	
+	  reset () {
+	    this.seconds = 0;
+	  }
+	}
+	
+	module.exports = Timer;
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Matter = __webpack_require__(4);
+	const Matter = __webpack_require__(5);
 	const Engine = Matter.Engine;
 	const Render = Matter.Render;
 	const World = Matter.World;
@@ -327,7 +425,7 @@
 	
 	class Collision {
 	  constructor () {
-	    this.tileSize = 64;
+	    this.tileSize = 32;
 	    this.engine = Engine.create();
 	    this.render = Render.create({
 	      element: document.getElementById("gameArea"),
@@ -335,6 +433,7 @@
 	    });
 	    this.engine.world.gravity = { x:0, y:0.5 };
 	    Matter.Events.on(this.engine, "collisionStart", this.handleCollision.bind(this));
+	    this.spawnDebris = this.spawnDebris.bind(this);
 	  }
 	
 	  update (map) {
@@ -342,7 +441,7 @@
 	    this.exitActive = false;
 	    this.levelComplete = false;
 	    this.boxes = [];
-	    this.player = Bodies.rectangle(100, 100, 32, 32, { inertia: Infinity, friction: 0.9 });
+	    this.player = Bodies.rectangle(50, 50, 16, 16, { inertia: Infinity, friction: 0.5, label: "player" });
 	    Matter.Body.setMass(this.player, 100);
 	    this.boxes.push(this.player);
 	    this.createHitBoxes();
@@ -359,6 +458,10 @@
 	          this.boxes.push(pickup);
 	        } else if (currentTile === 3) {
 	          this.boxes.push(this.createExit(row, col));
+	        } else if (currentTile === 4) {
+	          this.boxes.push(this.createSpawner(row, col));
+	        } else if (currentTile === 9) {
+	          this.boxes.push(this.createRemover(row, col));
 	        }
 	      }
 	    }
@@ -388,6 +491,30 @@
 	    );
 	  }
 	
+	  createSpawner (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 - 10,
+	        10,
+	        10,
+	        { isStatic: true, label: "spawner", isSensor: true }
+	      )
+	    );
+	  }
+	
+	  createRemover (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 + 1,
+	        this.tileSize,
+	        this.tileSize,
+	        { isStatic: true, label: "remover" }
+	      )
+	    );
+	  }
+	
 	  createExit (row, col) {
 	    return (
 	      Bodies.rectangle(
@@ -400,17 +527,64 @@
 	    );
 	  }
 	
+	  spawnDebris () {
+	    let debris = [];
+	
+	    Matter.Composite.allBodies(this.engine.world).forEach(body => {
+	      if (body.label === "spawner") {
+	        debris.push(Bodies.circle(
+	          body.position.x,
+	          body.position.y,
+	          5,
+	          { label: "debris", mass: 50 }
+	        ));
+	      }
+	    });
+	
+	    World.add(this.engine.world, debris);
+	  }
+	
+	  debrisPos () {
+	    let debris = [];
+	
+	    Matter.Composite.allBodies(this.engine.world).forEach(body => {
+	      if (body.label === "debris") {
+	        debris.push(body.position);
+	      }
+	    });
+	
+	    return debris;
+	  }
+	
 	  activateExit () {
 	    this.exitActive = true;
 	  }
 	
 	  handleCollision (event) {
-	    if (event.pairs[0].bodyB.label === "pickup") {
-	      Matter.Composite.remove(this.engine.world, event.pairs[0].bodyB);
-	    } else if (event.pairs[0].bodyB.label === "exit" && this.exitActive) {
-	      Matter.Composite.clear(this.engine.world);
-	      this.levelComplete = true;
-	    }
+	    event.pairs.forEach(pair => {
+	      if (pair.bodyB.label === "remover" || pair.bodyA.label === "remover") {
+	        if (pair.bodyB.label === "debris") {
+	          Matter.Composite.remove(this.engine.world, pair.bodyB);
+	        } else if (pair.bodyA.label === "debris") {
+	          Matter.Composite.remove(this.engine.world, pair.bodyA);
+	        }
+	      }
+	      if (pair.bodyB.label === "pickup" || pair.bodyA.label === "pickup") {
+	        if (pair.bodyB.label === "player") {
+	          Matter.Composite.remove(this.engine.world, pair.bodyA);
+	        } else {
+	          Matter.Composite.remove(this.engine.world, pair.bodyB);
+	        }
+	      }
+	      if (pair.bodyB.label === "exit" || pair.bodyA.label === "exit") {
+	        if (pair.bodyB.label === "player" || pair.bodyA.label === "player") {
+	          if (this.exitActive) {
+	            Matter.Composite.clear(this.engine.world);
+	            this.levelComplete = true;
+	          }
+	        }
+	      }
+	    });
 	  }
 	
 	  playerPos () {
@@ -463,7 +637,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var require;var require;/**
@@ -9743,7 +9917,7 @@
 	});
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	class Controller {
@@ -9767,42 +9941,6 @@
 	};
 	
 	module.exports = Controller;
-
-
-/***/ },
-/* 6 */,
-/* 7 */
-/***/ function(module, exports) {
-
-	class Timer {
-	  constructor () {
-	    this.seconds = 0;
-	  }
-	
-	  time () {
-	    let minutes = Math.floor(this.seconds / 100);
-	    let seconds = this.seconds % 100;
-	    return(`${this.pad(minutes)}:${this.pad(seconds)}`);
-	  }
-	
-	  pad (num) {
-	    if (num >= 10) {
-	      return `${num}`;
-	    } else {
-	      return `0${num}`;
-	    }
-	  }
-	
-	  tick () {
-	    this.seconds += 1;
-	  }
-	
-	  reset () {
-	    this.seconds = 0;
-	  }
-	}
-	
-	module.exports = Timer;
 
 
 /***/ }
