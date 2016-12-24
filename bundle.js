@@ -418,6 +418,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Matter = __webpack_require__(5);
+	const Generate = __webpack_require__(7);
 	const Engine = Matter.Engine;
 	const Render = Matter.Render;
 	const World = Matter.World;
@@ -426,6 +427,7 @@
 	class Collision {
 	  constructor () {
 	    this.tileSize = 32;
+	    this.generate = new Generate(this.tileSize);
 	    this.engine = Engine.create();
 	    this.render = Render.create({
 	      element: document.getElementById("gameArea"),
@@ -452,79 +454,19 @@
 	      for (let row = 0; row < this.map[0].length; row++) {
 	        let currentTile = this.map[col][row];
 	        if (currentTile === 1) {
-	          this.boxes.push(this.createBox(row, col));
+	          this.boxes.push(this.generate.box(row, col, this.tileSize));
 	        } else if (currentTile === 2) {
-	          let pickup = this.createPickup(row, col);
+	          let pickup = this.generate.pickup(row, col, this.tileSize);
 	          this.boxes.push(pickup);
 	        } else if (currentTile === 3) {
-	          this.boxes.push(this.createExit(row, col));
+	          this.boxes.push(this.generate.exit(row, col, this.tileSize));
 	        } else if (currentTile === 4) {
-	          this.boxes.push(this.createSpawner(row, col));
+	          this.boxes.push(this.generate.spawner(row, col, this.tileSize));
 	        } else if (currentTile === 9) {
-	          this.boxes.push(this.createRemover(row, col));
+	          this.boxes.push(this.generate.remover(row, col, this.tileSize));
 	        }
 	      }
 	    }
-	  }
-	
-	  createBox (row, col) {
-	    return (
-	      Bodies.rectangle(
-	        (row * this.tileSize) + this.tileSize/2 + 1,
-	        (col * this.tileSize) + this.tileSize/2 + 1,
-	        this.tileSize,
-	        this.tileSize,
-	        { isStatic: true }
-	      )
-	    );
-	  }
-	
-	  createPickup (row, col) {
-	    return (
-	      Bodies.rectangle(
-	        (row * this.tileSize) + this.tileSize/2 + 1,
-	        (col * this.tileSize) + this.tileSize/2 + 1,
-	        10,
-	        10,
-	        { isStatic: true, label: "pickup", isSensor: true }
-	      )
-	    );
-	  }
-	
-	  createSpawner (row, col) {
-	    return (
-	      Bodies.rectangle(
-	        (row * this.tileSize) + this.tileSize/2 + 1,
-	        (col * this.tileSize) + this.tileSize/2 - 10,
-	        10,
-	        10,
-	        { isStatic: true, label: "spawner", isSensor: true }
-	      )
-	    );
-	  }
-	
-	  createRemover (row, col) {
-	    return (
-	      Bodies.rectangle(
-	        (row * this.tileSize) + this.tileSize/2 + 1,
-	        (col * this.tileSize) + this.tileSize/2 + 1,
-	        this.tileSize,
-	        this.tileSize,
-	        { isStatic: true, label: "remover" }
-	      )
-	    );
-	  }
-	
-	  createExit (row, col) {
-	    return (
-	      Bodies.rectangle(
-	        (row * this.tileSize) + this.tileSize/2 + 1,
-	        (col * this.tileSize) + this.tileSize/2 + 1,
-	        this.tileSize,
-	        this.tileSize,
-	        { isStatic: true, label: "exit", isSensor: true }
-	      )
-	    );
 	  }
 	
 	  spawnDebris () {
@@ -9941,6 +9883,81 @@
 	};
 	
 	module.exports = Controller;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	const Bodies = Matter.Bodies;
+	
+	class Generate {
+	  constructor (tileSize) {
+	    this.tileSize = tileSize;
+	  }
+	
+	  box (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 + 1,
+	        this.tileSize,
+	        this.tileSize,
+	        { isStatic: true }
+	      )
+	    );
+	  }
+	
+	  pickup (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 + 1,
+	        10,
+	        10,
+	        { isStatic: true, label: "pickup", isSensor: true }
+	      )
+	    );
+	  }
+	
+	  spawner (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 - 10,
+	        10,
+	        10,
+	        { isStatic: true, label: "spawner", isSensor: true }
+	      )
+	    );
+	  }
+	
+	  remover (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 + 1,
+	        this.tileSize,
+	        this.tileSize,
+	        { isStatic: true, label: "remover" }
+	      )
+	    );
+	  }
+	
+	  exit (row, col) {
+	    return (
+	      Bodies.rectangle(
+	        (row * this.tileSize) + this.tileSize/2 + 1,
+	        (col * this.tileSize) + this.tileSize/2 + 1,
+	        this.tileSize,
+	        this.tileSize,
+	        { isStatic: true, label: "exit", isSensor: true }
+	      )
+	    );
+	  }
+	}
+	
+	module.exports = Generate;
 
 
 /***/ }
