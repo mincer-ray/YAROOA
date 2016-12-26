@@ -45,99 +45,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Game = __webpack_require__(1);
+	const Maps = __webpack_require__(8);
 	
 	$(() => {
-	  const map1 = {
-	    cols: 16,
-	    rows: 10,
-	    tiles: [
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-	    ],
-	    collision: [
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 4, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 2, 4, 0, 1],
-	      [1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 9, 1, 9, 9, 1, 9, 1, 9, 1, 9, 1, 9, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 9, 9, 1, 9, 1, 9, 9, 9, 1, 9, 9, 1, 1],
-	      [1, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 4, 4, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1],
-	      [1, 1, 9, 9, 9, 1, 9, 1, 9, 1, 9, 9, 9, 9, 1, 1]
-	    ]
-	  };
-	
-	  const map3 = {
-	    cols: 16,
-	    rows: 10,
-	    tiles: [
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 1],
-	      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-	      [2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-	    ],
-	    collision: [
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 0, 0, 0, 0, 0, 2, 0, 0, 4, 1, 0, 0, 0, 3, 1],
-	      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1],
-	      [1, 2, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 2, 0, 1, 0, 1, 1, 1, 0, 0, 2, 0, 0, 0, 1],
-	      [1, 1, 1, 1, 1, 9, 1, 1, 1, 9, 9, 9, 1, 1, 1, 1]
-	    ]
-	  };
-	
-	  const map2 = {
-	    cols: 16,
-	    rows: 10,
-	    tiles: [
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 4, 1],
-	      [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-	    ],
-	    collision: [
-	      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 1, 0, 9, 4, 9, 1, 1, 0, 0, 2, 0, 0, 3, 1],
-	      [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-	      [1, 0, 1, 1, 9, 0, 9, 0, 0, 2, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-	      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	      [1, 0, 0, 0, 1, 2, 1, 2, 1, 2, 1, 0, 0, 0, 0, 1],
-	      [1, 1, 1, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-	    ],
-	  };
-	
+	  debugger
 	  const game = new Game;
-	  game.addLevel(map2);
-	  game.addLevel(map3);
-	  game.addLevel(map1);
+	  game.addLevels(Maps);
 	  game.play();
 	});
 
@@ -149,7 +62,7 @@
 	const Render = __webpack_require__(2);
 	const Timer = __webpack_require__(3);
 	const Collision = __webpack_require__(4);
-	const Controller = __webpack_require__(6);
+	const Controller = __webpack_require__(7);
 	
 	class Game {
 	  constructor () {
@@ -157,6 +70,7 @@
 	    this.levelComplete = false;
 	    this.mapList = [];
 	    this.timer = new Timer;
+	    this.pickups = [];
 	
 	    this.clockInterval = window.setInterval(this.clock.bind(this), 10);
 	
@@ -167,16 +81,22 @@
 	    this.nextLevel();
 	  }
 	
-	  addLevel (map) {
-	    this.mapList.push(map);
+	  addLevels (maps) {
+	    maps.forEach(map => {
+	      this.mapList.push(map);
+	    });
 	  }
 	
 	  nextLevel () {
 	    this.collider = new Collision();
-	    this.controller = new Controller(this.collider);
+	    this.controller = new Controller(this.collider, this.timer, this.resetLevel.bind(this));
 	    this.render.clear();
+	    this.time = this.mapList[0].time;
+	    this.timer.reset();
+	    this.timer.setStart(this.time);
 	    this.initLevel(this.mapList.shift());
 	    this.runUpdater();
+	    this.pickups = this.collider.pickupPos();
 	  }
 	
 	  initLevel (map) {
@@ -185,8 +105,8 @@
 	    this.render.update();
 	    this.collider.populateWorld();
 	    this.collider.runEngine();
-	    this.collider.renderCollision();
-	    window.setInterval(this.collider.spawnDebris.bind(this), 10);
+	    // this.collider.renderCollision();
+	    window.setInterval(this.collider.spawnDebris.bind(this), 2000);
 	  }
 	
 	  updater () {
@@ -204,6 +124,10 @@
 	  }
 	
 	  checkPickups (pickups) {
+	    if (this.pickups.length > pickups.length) {
+	      this.timer.addTime(3);
+	      this.pickups = pickups;
+	    }
 	    if (pickups.length === 0) {
 	      this.allPickupsCollected = true;
 	    }
@@ -228,9 +152,19 @@
 	    // this.interval = window.setInterval(this.updater, 1);
 	  }
 	
+	  resetLevel () {
+	    this.collider.resetLevel();
+	    this.timer.reset();
+	    this.timer.setStart(this.time);
+	    this.pickups = this.collider.pickupPos();
+	  }
+	
 	  clock () {
 	    this.timer.tick();
 	    this.render.updateTime(this.timer.time());
+	    if (this.timer.time() === "00:00") {
+	      this.resetLevel().bind(this);
+	    }
 	  }
 	}
 	
@@ -258,7 +192,6 @@
 	    this.coin = new createjs.SpriteSheet({
 	      images: ["./assets/coin.png"],
 	      frames: [
-	        // [0, 0, 20, 20, 0, 0]
 	        [96, 80, 16, 16, 0, 8],
 	        [115, 80, 10, 16, 0, 5],
 	        [134, 80, 4, 16, 0, 2],
@@ -325,9 +258,13 @@
 	    this.player = new createjs.Bitmap("./assets/red.jpg");
 	    this.player.sourceRect = { x:0, y:0, width:16, height:16 };
 	    this.stage.addChild(this.player);
-	    this.text = new createjs.Text('00:00', "16px Arial", "#ffffff");
-	    this.stage.setChildIndex(this.text, this.stage.getNumChildren()-1);
-	    this.stage.addChild(this.text);
+	    this.time = new createjs.Text('00:00', "16px Arial", "#ffffff");
+	    this.title = new createjs.Text(`${map.title}`, "16px Arial", "#ffffff");
+	    this.title.x = 200;
+	    this.stage.setChildIndex(this.time, this.stage.getNumChildren()-1);
+	    this.stage.setChildIndex(this.title, this.stage.getNumChildren()-1);
+	    this.stage.addChild(this.time);
+	    this.stage.addChild(this.title);
 	  }
 	
 	  drawPlayer (pos) {
@@ -371,7 +308,7 @@
 	  }
 	
 	  updateTime (time) {
-	    this.text.text = time;
+	    this.time.text = time;
 	  }
 	}
 	
@@ -385,6 +322,15 @@
 	class Timer {
 	  constructor () {
 	    this.seconds = 0;
+	  }
+	
+	  setStart (start) {
+	    this.start = start;
+	    this.seconds = start * 100;
+	  }
+	
+	  addTime(time) {
+	    this.seconds += time * 100;
 	  }
 	
 	  time () {
@@ -402,11 +348,11 @@
 	  }
 	
 	  tick () {
-	    this.seconds += 1;
+	    this.seconds -= 1;
 	  }
 	
 	  reset () {
-	    this.seconds = 0;
+	    this.seconds = this.start * 100;
 	  }
 	}
 	
@@ -418,7 +364,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const Matter = __webpack_require__(5);
-	const Generate = __webpack_require__(7);
+	const Generate = __webpack_require__(6);
 	const Engine = Matter.Engine;
 	const Render = Matter.Render;
 	const World = Matter.World;
@@ -430,7 +376,7 @@
 	    this.generate = new Generate(this.tileSize);
 	    this.engine = Engine.create();
 	    this.render = Render.create({
-	      element: document.getElementById("gameArea"),
+	      element: document.getElementById("collision"),
 	      engine: this.engine
 	    });
 	    this.engine.world.gravity = { x:0, y:0.5 };
@@ -440,10 +386,10 @@
 	
 	  update (map) {
 	    this.map = map;
-	    this.exitActive = false;
+	    this.exitActive = true;
 	    this.levelComplete = false;
 	    this.boxes = [];
-	    this.player = Bodies.rectangle(50, 50, 16, 16, { inertia: Infinity, friction: 0.5, label: "player" });
+	    this.player = Bodies.rectangle(50, 270, 16, 16, { inertia: Infinity, friction: 0.5, label: "player" });
 	    Matter.Body.setMass(this.player, 100);
 	    this.boxes.push(this.player);
 	    this.createHitBoxes();
@@ -514,7 +460,7 @@
 	      if (pair.bodyB.label === "pickup" || pair.bodyA.label === "pickup") {
 	        if (pair.bodyB.label === "player") {
 	          Matter.Composite.remove(this.engine.world, pair.bodyA);
-	        } else {
+	        } else if (pair.bodyA.label === "player") {
 	          Matter.Composite.remove(this.engine.world, pair.bodyB);
 	        }
 	      }
@@ -543,6 +489,25 @@
 	    });
 	
 	    return pickups;
+	  }
+	
+	  resetLevel () {
+	    Matter.Composite.allBodies(this.engine.world).forEach(body => {
+	      if (body.label === "debris" || body.label === "pickup") {
+	        Matter.Composite.remove(this.engine.world, body);
+	      }
+	    });
+	    for (let col = 0; col < this.map.length; col++) {
+	      for (let row = 0; row < this.map[0].length; row++) {
+	        let currentTile = this.map[col][row];
+	        if (currentTile === 2) {
+	          let pickup = this.generate.pickup(row, col, this.tileSize);
+	          Matter.Composite.add(this.engine.world, pickup);
+	        }
+	      }
+	    }
+	    Matter.Body.setPosition(this.player, { x: 50, y: 270 });
+	    this.movePlayer("down");
 	  }
 	
 	  dir (dir) {
@@ -9862,33 +9827,6 @@
 /* 6 */
 /***/ function(module, exports) {
 
-	class Controller {
-	  constructor (collider) {
-	    this.collider = collider;
-	    $(window).on("keydown", this.handleKeyEvent.bind(this));
-	  }
-	
-	  handleKeyEvent(event) {
-	    if (Controller.KEYS[event.keyCode]) {
-	      this.collider.movePlayer(Controller.KEYS[event.keyCode]);
-	    }
-	  }
-	}
-	
-	Controller.KEYS = {
-	  37: "left",
-	  38: "up",
-	  39: "right",
-	  40: "down",
-	};
-	
-	module.exports = Controller;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
 	const Bodies = Matter.Bodies;
 	
 	class Generate {
@@ -9958,6 +9896,244 @@
 	}
 	
 	module.exports = Generate;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	class Controller {
+	  constructor (collider, timer, reset) {
+	    this.reset = reset;
+	    this.collider = collider;
+	    this.timer = timer;
+	    $(window).on("keydown", this.handleKeyEvent.bind(this));
+	  }
+	
+	  handleKeyEvent(event) {
+	    if (Controller.KEYS[event.keyCode]) {
+	      event.preventDefault();
+	      this.collider.movePlayer(Controller.KEYS[event.keyCode]);
+	    } else if (event.keyCode === 32) {
+	      event.preventDefault();
+	      this.reset();
+	    }
+	  }
+	}
+	
+	Controller.KEYS = {
+	  37: "left",
+	  38: "up",
+	  39: "right",
+	  40: "down"
+	};
+	
+	module.exports = Controller;
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const map1 = __webpack_require__(9);
+	const map2 = __webpack_require__(10);
+	const map3 = __webpack_require__(11);
+	const map4 = __webpack_require__(12);
+	const map5 = __webpack_require__(13);
+	
+	const Maps = [map1, map2, map3, map4, map5];
+	
+	module.exports = Maps;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "New Beginnings",
+	  time: 5,
+	  tiles: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,1,0,1,0,1,1,1,0,0,0,0,0,4,1],
+	    [1,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1],
+	    [1,0,1,1,1,0,1,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+	    [1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1],
+	    [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,1,0,1,0,1,0,1,0,0,0,0,1],
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,0,1,0,2,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,1,0,9,4,9,1,1,0,0,2,0,0,3,1],
+	    [1,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1],
+	    [1,0,1,1,9,0,9,0,0,2,0,0,0,0,0,1],
+	    [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+	    [1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1],
+	    [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,1,2,1,2,1,2,1,0,0,0,0,1],
+	    [1,1,1,9,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ],
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "Whatta Fall",
+	  time: 10,
+	  tiles: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,0,0,0,0,0,0,0,0,0,1,0,0,0,4,1],
+	    [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
+	    [1,0,1,0,0,0,0,0,0,1,1,0,0,0,0,1],
+	    [1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1],
+	    [1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1],
+	    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1],
+	    [1,0,0,0,1,0,1,1,1,0,0,0,0,0,0,1],
+	    [2,2,2,2,2,4,2,2,2,2,2,2,2,2,2,2]
+	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,0,0,0,0,0,2,0,0,4,1,0,0,0,3,1],
+	    [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
+	    [1,0,1,0,0,0,0,0,0,1,1,0,0,0,0,1],
+	    [1,2,0,1,0,0,0,0,0,1,0,0,0,0,0,1],
+	    [1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1],
+	    [1,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1],
+	    [1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1],
+	    [1,0,2,0,1,0,1,1,1,0,0,2,0,0,0,1],
+	    [1,1,1,1,1,9,1,1,1,9,9,9,1,1,1,1]
+	  ]
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "Shower Power",
+	  time: 8,
+	  tiles: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1],
+	    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,4,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,4,0,0,0,0,4,0,0,0,4,0,2,4,0,1],
+	    [1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,9,1,9,9,1,9,1,9,1,9,1,9,0,0,1],
+	    [1,0,0,0,0,0,0,0,2,4,0,0,0,0,0,1],
+	    [1,0,0,9,9,1,9,1,9,9,9,1,9,9,1,1],
+	    [1,0,0,4,0,0,0,0,0,2,0,4,4,0,0,1],
+	    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+	    [1,0,2,3,0,0,0,0,0,0,0,0,0,2,0,1],
+	    [1,1,9,9,9,1,9,1,9,1,9,9,9,9,1,1],
+	  ]
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "Closing In",
+	  time: 60,
+	  tiles: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1],
+	    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1],
+	    [1,1,0,1,1,1,1,1,0,1,1,0,1,1,0,1],
+	    [1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1],
+	    [1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
+	    [1,1,1,1,1,0,1,1,1,1,1,0,1,0,0,1],
+	    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1],
+	    [1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,1],
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1],
+	    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1],
+	    [1,1,0,1,1,1,1,1,0,1,1,0,1,1,0,1],
+	    [1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1],
+	    [1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
+	    [1,1,1,1,1,0,1,1,1,1,1,0,1,0,0,1],
+	    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1],
+	    [1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,1],
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ],
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "Unrequitted",
+	  time: 3,
+	  tiles: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,1,1,0,1,0,1,0,0,0,0,4,1],
+	    [1,0,1,0,0,0,0,1,0,0,0,1,1,1,1,1],
+	    [1,0,1,1,0,0,1,1,1,1,0,0,0,0,0,1],
+	    [1,0,0,1,0,0,0,0,0,1,1,0,1,1,0,1],
+	    [1,0,0,0,1,1,0,1,0,0,0,0,0,0,0,1],
+	    [1,1,1,0,1,0,0,0,1,1,1,0,1,1,0,1],
+	    [1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1],
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,1,1,0,1,0,1,0,0,0,0,3,1],
+	    [1,0,1,0,0,0,0,1,0,0,0,1,1,1,1,1],
+	    [1,0,1,1,0,0,1,1,1,1,0,0,0,0,0,1],
+	    [1,0,0,1,0,0,0,0,0,1,1,0,1,1,0,1],
+	    [1,0,0,0,1,1,0,1,0,0,0,0,0,0,0,1],
+	    [1,1,1,0,1,0,0,0,1,1,1,0,1,1,0,1],
+	    [1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1],
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ],
+	};
+	
+	module.exports = map;
 
 
 /***/ }
