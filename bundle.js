@@ -48,7 +48,6 @@
 	const Maps = __webpack_require__(8);
 	
 	$(() => {
-	  debugger
 	  const game = new Game;
 	  game.addLevels(Maps);
 	  game.play();
@@ -89,7 +88,7 @@
 	
 	  nextLevel () {
 	    this.collider = new Collision();
-	    this.controller = new Controller(this.collider, this.timer, this.resetLevel.bind(this));
+	    this.controller = new Controller(this.collider, this.timer, this.render, this.resetLevel.bind(this));
 	    this.render.clear();
 	    this.time = this.mapList[0].time;
 	    this.timer.reset();
@@ -106,7 +105,8 @@
 	    this.collider.populateWorld();
 	    this.collider.runEngine();
 	    // this.collider.renderCollision();
-	    window.setInterval(this.collider.spawnDebris.bind(this), 2000);
+	    window.setInterval(this.collider.spawnDebris.bind(this, "water"), 10);
+	    window.setInterval(this.collider.spawnDebris.bind(this, "broken"), 2000);
 	  }
 	
 	  updater () {
@@ -163,7 +163,7 @@
 	    this.timer.tick();
 	    this.render.updateTime(this.timer.time());
 	    if (this.timer.time() === "00:00") {
-	      this.resetLevel().bind(this);
+	      this.resetLevel();
 	    }
 	  }
 	}
@@ -183,11 +183,7 @@
 	    this.pickups = [];
 	    this.debris = [];
 	
-	    this.tiles.push({ x:0, y:0, width:this.tileSize, height:this.tileSize });
-	    this.tiles.push({ x:32, y:0, width:this.tileSize, height:this.tileSize });
-	    this.tiles.push({ x:0, y:32, width:this.tileSize, height:this.tileSize });
-	    this.tiles.push({ x:0, y:0, width:10, height:10 });
-	    this.tiles.push({ x:32, y:32, width:this.tileSize, height:this.tileSize });
+	    this.cutTiles();
 	
 	    this.coin = new createjs.SpriteSheet({
 	      images: ["./assets/coin.png"],
@@ -205,8 +201,54 @@
 	      }
 	    });
 	
+	    this.playerModel = new createjs.SpriteSheet({
+	      images: ["./assets/spaceman2.png"],
+	      frames: [
+	        [0, 0, 32, 32, 0, 0],
+	        [34, 0, 32, 38, 0, 0],
+	        [68, 0, 32, 46, 0, 0],
+	        [102, 0, 32, 48, 0, 0],
+	        [0, 50, 44, 32, 0, 12],
+	        [46, 50, 52, 32, 0, 20],
+	        [100, 50, 54, 32, 0, 22],
+	      ],
+	      animations: {
+	        idle: {
+	          frames: [0]
+	        },
+	        up: {
+	          frames: [1, 2, 3],
+	          speed: 0.1,
+	          next: false
+	        },
+	        side: {
+	          frames: [4, 5, 6],
+	          speed: 0.1,
+	          next: false
+	        },
+	        uBoost: {
+	          frames: [3]
+	        },
+	        sBoost: {
+	          frames: [6]
+	        },
+	      }
+	    });
+	
 	    createjs.Ticker.framerate = 60;
 	    createjs.Ticker.on("tick", this.stage);
+	  }
+	
+	  cutTiles () {
+	    this.tileConverter = {};
+	    let i = 0;
+	    for (let y = 0; y < 8; y += 1 ) {
+	      for (let x = 0; x < 10; x += 1) {
+	        this.tiles.push({ x:x*32, y:y*32, width:this.tileSize, height:this.tileSize });
+	        this.tileConverter[parseFloat(`${x}.${y}`)] = i;
+	        i += 1;
+	      }
+	    }
 	  }
 	
 	  clear () {
@@ -219,10 +261,10 @@
 	  }
 	
 	  drawTile (num, x, y) {
-	    let currentTile = new createjs.Bitmap("./assets/tileatlas.png");
+	    let currentTile = new createjs.Bitmap("./assets/yarooafinal.png");
 	    currentTile.x = x * this.tileSize;
 	    currentTile.y = y * this.tileSize;
-	    currentTile.sourceRect = this.tiles[num];
+	    currentTile.sourceRect = this.tiles[this.tileConverter[num]];
 	    // if (num === 0) this.pickups.push(currentTile);
 	    this.stage.addChild(currentTile);
 	  }
@@ -236,11 +278,20 @@
 	    this.stage.addChild(pickup);
 	  }
 	
-	  addDebris (x, y) {
-	    let debris = new createjs.Bitmap("./assets/blue.jpg");
+	  addWater (x, y) {
+	    let debris = new createjs.Bitmap("./assets/yarooatest2.png");
 	    debris.x = x;
 	    debris.y = y;
-	    debris.sourceRect = this.tiles[3];
+	    debris.sourceRect = { x:0, y:128, width:10, height:10 };
+	    this.debris.push(debris);
+	    this.stage.addChild(debris);
+	  }
+	
+	  addTrash (x, y) {
+	    let debris = new createjs.Bitmap("./assets/yarooatest2.png");
+	    debris.x = x;
+	    debris.y = y;
+	    debris.sourceRect = { x:128, y:96, width:10, height:10 };
 	    this.debris.push(debris);
 	    this.stage.addChild(debris);
 	  }
@@ -249,17 +300,18 @@
 	    for (let col = 0; col < map.cols; col++) {
 	      for (let row = 0; row < map.rows; row++) {
 	        let currentTile = this.getTile(map.tiles, row, col);
-	        if (currentTile === 9 || currentTile === 0) {
+	        if (currentTile === -1 || currentTile === 0) {
 	        } else {
 	          this.drawTile(currentTile, col, row);
 	        }
 	      }
 	    }
-	    this.player = new createjs.Bitmap("./assets/red.jpg");
-	    this.player.sourceRect = { x:0, y:0, width:16, height:16 };
+	    this.player = new createjs.Sprite(this.playerModel);
+	    this.player.scaleX = 0.5;
+	    this.player.scaleY = 0.5;
 	    this.stage.addChild(this.player);
-	    this.time = new createjs.Text('00:00', "16px Arial", "#ffffff");
-	    this.title = new createjs.Text(`${map.title}`, "16px Arial", "#ffffff");
+	    this.time = new createjs.Text('00:00', "Bold 30px VT323", "#ffffff");
+	    this.title = new createjs.Text(`${map.title}`, "Bold 30px VT323", "#ffffff");
 	    this.title.x = 200;
 	    this.stage.setChildIndex(this.time, this.stage.getNumChildren()-1);
 	    this.stage.setChildIndex(this.title, this.stage.getNumChildren()-1);
@@ -292,14 +344,42 @@
 	      });
 	      this.debris = [];
 	      newDebris.forEach(piece => {
-	        this.addDebris(piece.x - 6, piece.y - 5);
+	        if (piece.label === "drop") {
+	          this.addWater(piece.pos.x - 6, piece.pos.y - 5);
+	        } else {
+	          this.addTrash(piece.pos.x - 6, piece.pos.y - 5);
+	        }
 	      });
 	      this.stage.update();
 	    }
 	
 	    for (let i = 0 ; i < newDebris.length ; i++) {
-	      this.debris[i].x = newDebris[i].x - 6;
-	      this.debris[i].y = newDebris[i].y - 5;
+	      this.debris[i].x = newDebris[i].pos.x - 6;
+	      this.debris[i].y = newDebris[i].pos.y - 5;
+	    }
+	  }
+	
+	  animatePlayer(direction) {
+	    if ( direction === "up" ) {
+	      if (this.player.currentAnimation != "up") {
+	        this.player.gotoAndPlay("up");
+	      }
+	    } else if ( direction === "left" ) {
+	      this.player.scaleX = -0.5;
+	      this.player.regX = 32;
+	      if ( this.player.currentAnimation != "side" ) {
+	        this.player.gotoAndPlay("side");
+	      }
+	    } else if ( direction === "right" ) {
+	      this.player.scaleX = 0.5;
+	      this.player.regX = 0;
+	      if ( this.player.currentAnimation != "side" ) {
+	        this.player.gotoAndPlay("side");
+	      }
+	    } else if ( direction === "idle" ) {
+	      this.player.gotoAndPlay("idle");
+	    } else {
+	      this.player.gotoAndPlay("idle");
 	    }
 	  }
 	
@@ -376,7 +456,7 @@
 	    this.generate = new Generate(this.tileSize);
 	    this.engine = Engine.create();
 	    this.render = Render.create({
-	      element: document.getElementById("collision"),
+	      element: document.getElementById("gameArea"),
 	      engine: this.engine
 	    });
 	    this.engine.world.gravity = { x:0, y:0.5 };
@@ -389,7 +469,8 @@
 	    this.exitActive = true;
 	    this.levelComplete = false;
 	    this.boxes = [];
-	    this.player = Bodies.rectangle(50, 270, 16, 16, { inertia: Infinity, friction: 0.5, label: "player" });
+	    // this.player = Bodies.rectangle(50, 270, 16, 16, { inertia: Infinity, friction: 0.5, label: "player" });
+	    this.player = Bodies.circle(50, 270, 8, { inertia: Infinity, friction: 0.5, label: "player" });
 	    Matter.Body.setMass(this.player, 100);
 	    this.boxes.push(this.player);
 	    this.createHitBoxes();
@@ -407,7 +488,9 @@
 	        } else if (currentTile === 3) {
 	          this.boxes.push(this.generate.exit(row, col, this.tileSize));
 	        } else if (currentTile === 4) {
-	          this.boxes.push(this.generate.spawner(row, col, this.tileSize));
+	          this.boxes.push(this.generate.spawner(row, col, this.tileSize, "water"));
+	        } else if (currentTile === 5) {
+	          this.boxes.push(this.generate.spawner(row, col, this.tileSize, "broken"));
 	        } else if (currentTile === 9) {
 	          this.boxes.push(this.generate.remover(row, col, this.tileSize));
 	        }
@@ -415,16 +498,22 @@
 	    }
 	  }
 	
-	  spawnDebris () {
+	  spawnDebris (type) {
 	    let debris = [];
+	    let debrisType = "";
+	    if (type === "water") {
+	      debrisType = "drop";
+	    } else {
+	      debrisType = "trash";
+	    }
 	
 	    Matter.Composite.allBodies(this.engine.world).forEach(body => {
-	      if (body.label === "spawner") {
+	      if (body.label === type) {
 	        debris.push(Bodies.circle(
 	          body.position.x,
 	          body.position.y,
 	          5,
-	          { label: "debris", mass: 50 }
+	          { label: debrisType, mass: 50 }
 	        ));
 	      }
 	    });
@@ -436,8 +525,8 @@
 	    let debris = [];
 	
 	    Matter.Composite.allBodies(this.engine.world).forEach(body => {
-	      if (body.label === "debris") {
-	        debris.push(body.position);
+	      if (body.label === "drop" || body.label === "trash") {
+	        debris.push({pos: body.position, label: body.label});
 	      }
 	    });
 	
@@ -451,9 +540,9 @@
 	  handleCollision (event) {
 	    event.pairs.forEach(pair => {
 	      if (pair.bodyB.label === "remover" || pair.bodyA.label === "remover") {
-	        if (pair.bodyB.label === "debris") {
+	        if (pair.bodyB.label === "drop") {
 	          Matter.Composite.remove(this.engine.world, pair.bodyB);
-	        } else if (pair.bodyA.label === "debris") {
+	        } else if (pair.bodyA.label === "drop") {
 	          Matter.Composite.remove(this.engine.world, pair.bodyA);
 	        }
 	      }
@@ -493,7 +582,7 @@
 	
 	  resetLevel () {
 	    Matter.Composite.allBodies(this.engine.world).forEach(body => {
-	      if (body.label === "debris" || body.label === "pickup") {
+	      if (body.label === "drop" || body.label === "trash" || body.label === "pickup") {
 	        Matter.Composite.remove(this.engine.world, body);
 	      }
 	    });
@@ -9858,14 +9947,14 @@
 	    );
 	  }
 	
-	  spawner (row, col) {
+	  spawner (row, col, tileSize, type) {
 	    return (
 	      Bodies.rectangle(
 	        (row * this.tileSize) + this.tileSize/2 + 1,
 	        (col * this.tileSize) + this.tileSize/2 - 10,
 	        10,
 	        10,
-	        { isStatic: true, label: "spawner", isSensor: true }
+	        { isStatic: true, label: type, isSensor: true }
 	      )
 	    );
 	  }
@@ -9903,20 +9992,28 @@
 /***/ function(module, exports) {
 
 	class Controller {
-	  constructor (collider, timer, reset) {
+	  constructor (collider, timer, render, reset) {
 	    this.reset = reset;
 	    this.collider = collider;
 	    this.timer = timer;
+	    this.render = render;
 	    $(window).on("keydown", this.handleKeyEvent.bind(this));
+	    $(window).on("keyup", this.handleKeyEvent.bind(this));
 	  }
 	
 	  handleKeyEvent(event) {
-	    if (Controller.KEYS[event.keyCode]) {
-	      event.preventDefault();
-	      this.collider.movePlayer(Controller.KEYS[event.keyCode]);
-	    } else if (event.keyCode === 32) {
-	      event.preventDefault();
-	      this.reset();
+	    if (event.type === "keyup") {
+	      this.render.animatePlayer("idle");
+	    } else {
+	      this.render.animatePlayer(Controller.KEYS[event.keyCode]);
+	
+	      if (Controller.KEYS[event.keyCode]) {
+	        event.preventDefault();
+	        this.collider.movePlayer(Controller.KEYS[event.keyCode]);
+	      } else if (event.keyCode === 32) {
+	        event.preventDefault();
+	        this.reset();
+	      }
 	    }
 	  }
 	}
@@ -9940,8 +10037,13 @@
 	const map3 = __webpack_require__(11);
 	const map4 = __webpack_require__(12);
 	const map5 = __webpack_require__(13);
+	const map6 = __webpack_require__(14);
+	const map7 = __webpack_require__(15);
+	const map8 = __webpack_require__(16);
+	const map9 = __webpack_require__(17);
+	const map10 = __webpack_require__(18);
 	
-	const Maps = [map1, map2, map3, map4, map5];
+	const Maps = [map10, map9, map8, map7, map6, map1, map2, map3, map4, map5];
 	
 	module.exports = Maps;
 
@@ -9996,7 +10098,7 @@
 	  tiles: [
 	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 	    [1,0,0,0,0,0,0,0,0,0,1,0,0,0,4,1],
-	    [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
+	    [1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,1],
 	    [1,0,1,0,0,0,0,0,0,1,1,0,0,0,0,1],
 	    [1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1],
 	    [1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1],
@@ -10008,7 +10110,7 @@
 	  collision: [
 	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 	    [1,0,0,0,0,0,2,0,0,4,1,0,0,0,3,1],
-	    [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
+	    [1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,1],
 	    [1,0,1,0,0,0,0,0,0,1,1,0,0,0,0,1],
 	    [1,2,0,1,0,0,0,0,0,1,0,0,0,0,0,1],
 	    [1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1],
@@ -10072,7 +10174,7 @@
 	  tiles: [
 	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 	    [1,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1],
-	    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1],
+	    [1,0,0,0,0,0,1,0,0,1,0,0,1,4,0,1],
 	    [1,1,0,1,1,1,1,1,0,1,1,0,1,1,0,1],
 	    [1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1],
 	    [1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
@@ -10083,15 +10185,15 @@
 	  ],
 	  collision: [
 	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-	    [1,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1],
-	    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1],
-	    [1,1,0,1,1,1,1,1,0,1,1,0,1,1,0,1],
+	    [1,4,0,1,0,0,0,0,0,0,0,4,1,0,0,1],
+	    [1,0,0,0,0,0,1,0,0,9,0,0,1,3,0,1],
+	    [1,1,0,9,9,1,1,1,0,1,9,0,1,1,0,1],
 	    [1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1],
-	    [1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
-	    [1,1,1,1,1,0,1,1,1,1,1,0,1,0,0,1],
+	    [1,0,0,9,0,0,1,0,0,9,0,0,0,0,0,1],
+	    [1,1,1,1,9,0,1,1,1,1,1,0,9,0,0,1],
 	    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1],
-	    [1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,1],
-	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	    [1,0,0,9,0,0,0,0,0,1,0,0,1,0,0,1],
+	    [1,1,1,1,1,9,1,9,1,1,9,9,1,9,9,1]
 	  ],
 	};
 	
@@ -10106,7 +10208,7 @@
 	  cols: 16,
 	  rows: 10,
 	  title: "Unrequitted",
-	  time: 3,
+	  time: 60,
 	  tiles: [
 	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 	    [1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
@@ -10121,16 +10223,206 @@
 	  ],
 	  collision: [
 	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-	    [1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+	    [1,1,0,0,0,4,0,1,0,0,0,0,0,0,0,1],
 	    [1,0,0,0,1,1,0,1,0,1,0,0,0,0,3,1],
-	    [1,0,1,0,0,0,0,1,0,0,0,1,1,1,1,1],
+	    [1,0,9,0,0,0,0,9,0,0,0,1,1,1,1,1],
 	    [1,0,1,1,0,0,1,1,1,1,0,0,0,0,0,1],
 	    [1,0,0,1,0,0,0,0,0,1,1,0,1,1,0,1],
-	    [1,0,0,0,1,1,0,1,0,0,0,0,0,0,0,1],
-	    [1,1,1,0,1,0,0,0,1,1,1,0,1,1,0,1],
-	    [1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1],
+	    [1,0,0,0,1,1,0,9,0,0,0,0,0,0,0,1],
+	    [1,9,9,0,1,0,0,0,1,1,1,0,1,1,0,1],
+	    [1,0,0,0,1,0,9,0,0,0,0,0,0,0,0,1],
 	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ]
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "Tearz",
+	  time: 60,
+	  tiles: [
+	    [1.0,4.0,2.3,2.3,2.7,2.6,2.3,4.4,2.3,2.3,2.3,2.3,2.7,2.3,2.3,2.0]
+	    ,[3.1,2.1,-1,-1,-1,-1,-1,0.2,-1,-1,-1,-1,0.2,-1,-1,0.2]
+	    ,[0.2,-1,-1,-1,1.7,3.3,-1,0.2,-1,1.2,-1,-1,0.2,-1,4.3,0.2]
+	    ,[0.2,-1,0.1,-1,-1,-1,-1,0.2,-1,-1,-1,1.3,2.3,2.3,2.3,4.5]
+	    ,[0.2,-1,1.1,2.0,-1,-1,1.3,3.2,2.3,2.0,-1,-1,0.2,-1,-1,0.2]
+	    ,[0.2,2.3,2.3,0.3,2.4,-1,-1,-1,3.1,1.1,3.3,-1,1.3,3.3,-1,0.2]
+	    ,[0.2,-1,-1,-1,1.0,3.3,-1,1.2,0.6,-1,-1,-1,1.5,2.0,-1,0.2]
+	    ,[3.5,2.3,3.3,-1,0.2,-1,-1,-1,1.3,2.3,3.7,-1,1.3,3.3,-1,0.2]
+	    ,[0.2,-1,-1,-1,0.2,-1,0.1,-1,0.6,-1,-1,-1,-1,0.2,-1,0.2]
+	    ,[1.1,2.3,2.7,2.3,3.2,2.3,4.6,2.3,2.3,2.3,2.3,2.3,2.7,2.3,2.3,2.1]
 	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	    [1,1,0,0,0,4,0,1,0,0,0,5,0,0,0,1],
+	    [1,5,0,0,1,1,0,1,0,1,0,0,0,0,3,1],
+	    [1,0,9,0,0,0,0,9,0,0,0,1,1,1,1,1],
+	    [1,0,1,1,0,0,1,1,1,1,0,0,0,0,5,1],
+	    [1,0,0,1,0,0,0,0,0,1,1,0,1,1,0,1],
+	    [1,0,0,0,1,1,0,9,0,0,0,0,0,0,0,1],
+	    [1,9,9,0,1,0,0,0,1,1,1,0,1,1,0,1],
+	    [1,0,0,0,1,0,9,0,0,0,0,0,0,0,0,1],
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ]
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "Unpossible",
+	  time: 60,
+	  tiles: [
+	    [1.0,2.3,2.3,2.3,2.3,2.3,2.3,2.3,3.0,2.6,4.4,2.3,2.3,2.3,2.3,2.0]
+	    ,[0.2,-1,-1,-1,-1,-1,-1,-1,0.2,-1,0.2,-1,-1,-1,-1,0.2]
+	    ,[0.2,-1,-1,-1,-1,-1,-1,-1,0.2,-1,0.2,-1,-1,-1,-1,0.2]
+	    ,[0.2,-1,-1,-1,-1,-1,-1,-1,0.3,-1,0.3,-1,-1,-1,-1,0.2]
+	    ,[0.2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0.2]
+	    ,[0.2,-1,-1,-1,-1,1.3,3.0,2.3,3.3,-1,0.1,-1,-1,-1,-1,0.2]
+	    ,[0.2,-1,-1,-1,-1,-1,0.2,-1,-1,-1,0.2,-1,-1,-1,-1,0.2]
+	    ,[0.2,-1,-1,1.3,2.3,2.3,2.1,-1,1.0,2.3,2.5,-1,-1,-1,-1,0.2]
+	    ,[0.2,-1,-1,-1,-1,-1,-1,-1,0.2,-1,-1,-1,-1,-1,-1,0.2]
+	    ,[1.1,2.3,2.3,2.3,2.3,2.3,2.3,2.3,3.2,2.3,2.3,2.3,2.3,2.3,2.3,2.1]
+	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	    ,[1,0,0,0,0,0,0,0,1,4,1,0,0,0,0,1]
+	    ,[1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1]
+	    ,[1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1]
+	    ,[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+	    ,[1,0,0,0,0,1,1,1,9,0,9,0,0,0,0,1]
+	    ,[1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1]
+	    ,[1,0,0,9,9,1,1,0,1,1,1,0,0,0,0,1]
+	    ,[1,0,0,0,0,0,0,0,1,0,0,0,0,0,3,1]
+	    ,[1,1,1,9,9,1,1,1,1,1,1,9,9,9,1,1]
+	  ]
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "Oberheim",
+	  time: 60,
+	  tiles: [
+	    [1.0,4.0,2.3,2.3,3.0,2.6,3.0,2.3,2.3,3.0,2.6,3.0,2.3,2.3,3.0,2.0]
+	    ,[3.1,2.5,0.0,-1,0.3,-1,0.2,-1,-1,0.2,-1,0.3,-1,-1,1.5,4.1]
+	    ,[0.2,-1,-1,0.1,-1,-1,0.2,-1,-1,0.2,-1,-1,0.1,-1,-1,0.2]
+	    ,[0.2,-1,-1,0.2,-1,1.3,2.1,-1,-1,1.1,3.3,-1,0.2,-1,-1,0.2]
+	    ,[3.1,3.3,-1,0.2,-1,-1,-1,-1,-1,-1,-1,-1,0.2,-1,-1,0.2]
+	    ,[0.2,-1,-1,1.1,2.3,2.3,3.3,-1,-1,1.0,3.3,-1,3.1,3.3,-1,0.2]
+	    ,[0.2,-1,1.2,-1,-1,-1,-1,-1,-1,0.2,-1,-1,0.2,-1,-1,0.2]
+	    ,[0.2,-1,-1,-1,0.1,-1,1.3,2.3,2.3,4.1,-1,-1,0.3,-1,1.3,4.1]
+	    ,[0.2,-1,-1,1.0,4.1,-1,-1,-1,-1,0.2,-1,-1,-1,-1,-1,0.2]
+	    ,[1.1,2.3,2.3,3.2,3.2,2.3,2.3,2.3,2.3,3.2,2.3,2.3,2.3,2.3,2.3,2.1]
+	  ],
+	  collision: [
+	  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ,[1,1,0,0,1,4,1,5,5,1,4,1,3,5,1,1]
+	  ,[1,5,0,1,0,0,1,0,0,1,0,0,1,0,5,1]
+	  ,[1,0,0,1,0,1,1,0,0,1,1,0,1,0,0,1]
+	  ,[1,1,0,9,0,0,0,0,0,0,0,0,1,0,0,1]
+	  ,[1,5,0,1,1,1,1,0,0,1,1,0,1,1,0,1]
+	  ,[1,0,1,5,0,0,0,0,0,1,5,0,1,0,0,1]
+	  ,[1,0,0,0,1,0,1,9,9,1,0,0,1,0,1,1]
+	  ,[1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,1]
+	  ,[1,1,1,1,1,1,1,1,1,1,1,9,1,1,1,1]
+	  ]
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "So Close Yet",
+	  time: 60,
+	  tiles: [
+	    [1.0,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,3.0,2.3,2.3,2.3,2.3,2.0]
+	  ,[0.2,1.2,5.2,-1,-1,-1,-1,-1,-1,-1,0.2,6.3,8.2,7.1,1.2,0.2]
+	  ,[0.2,-1,6.1,1.0,2.3,2.3,2.3,2.3,3.3,6.0,0.2,-1,0.1,-1,-1,0.2]
+	  ,[0.2,-1,-1,0.2,-1,5.2,-1,5.2,-1,5.2,0.2,-1,0.2,-1,1.3,4.1]
+	  ,[3.1,3.3,7.3,0.2,-1,0.1,-1,0.1,-1,0.1,0.2,6.2,0.2,-1,8.1,0.2]
+	  ,[0.2,-1,-1,0.2,-1,1.1,2.3,3.2,2.3,3.2,2.1,-1,0.2,-1,1.3,4.1]
+	  ,[3.1,3.3,-1,0.2,-1,-1,5.2,-1,5.2,-1,-1,-1,0.2,6.2,-1,0.2]
+	  ,[0.2,-1,-1,1.1,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.1,-1,-1,0.2]
+	  ,[0.2,1.2,1.2,1.2,5.7,-1,5.2,-1,5.2,-1,-1,-1,5.2,-1,1.2,0.2]
+	  ,[1.1,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.1]
+	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	    ,[1,1,5,0,0,0,5,0,0,5,1,5,0,0,1,1]
+	    ,[1,0,0,1,1,1,1,1,1,0,1,0,1,0,0,1]
+	    ,[1,0,0,1,0,0,5,0,0,0,1,0,1,0,1,1]
+	    ,[1,1,0,1,0,1,0,1,0,1,1,0,1,0,0,1]
+	    ,[1,0,0,1,0,1,1,1,1,1,1,0,1,0,1,1]
+	    ,[1,1,0,1,0,0,0,0,5,0,0,0,1,0,0,1]
+	    ,[1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1]
+	    ,[1,1,1,1,3,0,0,0,0,5,0,0,0,0,1,1]
+	    ,[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	  ]
+	};
+	
+	module.exports = map;
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	const map = {
+	  cols: 16,
+	  rows: 10,
+	  title: "Pallisades",
+	  time: 3,
+	  tiles: [
+	    [1.0,2.3,3.0,2.3,2.6,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,3.0,2.3,2.0]
+	  ,[0.2,1.2,0.2,5.2,-1,5.2,-1,-1,5.2,-1,-1,5.2,-1,0.2,1.2,0.2]
+	  ,[0.2,1.2,3.2,3.3,-1,1.2,-1,-1,1.2,8.3,-1,1.2,-1,1.1,1.2,0.2]
+	  ,[0.2,-1,-1,5.2,-1,5.2,-1,-1,5.2,-1,-1,5.2,-1,-1,-1,0.2]
+	  ,[3.5,3.7,-1,1.2,-1,1.2,-1,-1,1.2,-1,-1,1.2,7.3,1.2,5.7,0.2]
+	  ,[0.2,-1,-1,0.2,-1,0.2,5.1,-1,0.2,-1,-1,0.2,-1,1.1,2.7,4.5]
+	  ,[0.2,-1,-1,1.2,-1,1.2,8.2,8.3,1.1,1.2,1.2,2.1,-1,-1,-1,0.2]
+	  ,[0.2,-1,-1,5.2,-1,5.2,-1,-1,-1,5.2,5.2,-1,-1,-1,-1,0.2]
+	  ,[0.2,-1,1.2,5.2,-1,5.2,-1,1.2,-1,5.2,5.2,-1,1.2,-1,6.0,0.2]
+	  ,[1.1,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.1]
+	  ],
+	  collision: [
+	    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	    ,[1,1,1,0,4,0,0,0,0,0,5,0,0,1,1,1]
+	    ,[1,1,1,9,0,9,0,0,1,0,0,1,0,1,1,1]
+	    ,[1,2,0,0,0,5,0,0,0,0,0,0,0,0,0,1]
+	    ,[1,1,0,1,0,1,0,0,1,0,0,1,0,1,3,1]
+	    ,[1,0,0,1,0,1,0,0,1,0,2,1,0,1,1,1]
+	    ,[1,0,0,1,0,1,0,0,1,1,1,1,0,5,0,1]
+	    ,[1,0,0,5,0,0,0,0,0,5,0,0,0,0,0,1]
+	    ,[1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1]
+	    ,[1,1,1,1,9,1,1,1,1,1,1,1,1,1,1,1]
+	  ]
 	};
 	
 	module.exports = map;
