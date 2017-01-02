@@ -1,0 +1,40 @@
+body {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Montserrat';
+  color: white;
+  background: black;
+}
+
+canvas {
+  background-image: url(./stars.gif);
+  background-size: 100%;
+}
+
+h1 {
+  font-size: 48px;
+  font-family: 'Lobster';
+}
+
+p {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+ul {
+  display: flex;
+  list-style: none;
+  font-style: normal;
+  color: white;
+  text-decoration: none;
+  flex-direction: row;
+  justify-content: space-between;
+
+}
+
+li {
+  padding: 10px;
+}

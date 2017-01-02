@@ -1,6 +1,0 @@
-body { -webkit-font-smoothing: none; }
-
-canvas {
-  background-image: url(./stars.gif);
-  background-size: 100%;
-}
