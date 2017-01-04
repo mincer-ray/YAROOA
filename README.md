@@ -20,8 +20,11 @@ Controls:
 - [ ] Press and hold an Arrow Key to Power Boost your jetpack
 
 Game Goals:
+
 1. Make it to the exit before the time runs out
+
 2. Collect extra air for more time
+
 3. Dodge falling debris and fuel tank leaks, they will slow you down!
 
 ### Technologies
@@ -97,12 +100,12 @@ module.exports = map;
 External map files allow for easy creation of as many levels as the game designer wants. The file includes a tilemap for the rendering engine, a collision map for the physics engine, a title, a starting time, and the dimension of the map in tiles. The rending engine uses the `x.y` coordinates in the `tiles` array to selects a part of `yarooafinal.png` to create the EaselJS bitmap image for a specific tile. An online tile mapping tool was used to assist in designing the levels.
 
 The collision map uses the following key:
-- [] 1 for solid
-- [] 0 for empty
-- [] 4 for fuel leak spawner
-- [] 5 for debris spawner
-- [] 2 for air pickups
-- [] 9 is a special tile. In order to keep the screen from being flooded with pink
+- [ ] 1 for solid
+- [ ] 0 for empty
+- [ ] 4 for fuel leak spawner
+- [ ] 5 for debris spawner
+- [ ] 2 for air pickups
+- [ ] 9 is a special tile. In order to keep the screen from being flooded with pink
 fuel squares, the 9 tile removes any pink fuel piece it comes into contact with from
 the stage. This prevents the game from slowing down and breaking while maintaining
 the appearance of flowing liquid.
