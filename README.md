@@ -1,4 +1,4 @@
-[live]: https://www.peterdegenaro.com/YAROOA
+[live]: http://www.peterdegenaro.com/YAROOA
 [easel]: http://www.createjs.com/easeljs
 [matter]: http://brm.io/matter-js/
 
