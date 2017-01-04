@@ -30,7 +30,7 @@ Ideally the game will also include:
 
 ### Wireframes
 
-![wireframes](https://raw.githubusercontent.com/mincer-ray/jsgame/master/Screen%20Shot%202016-12-19%20at%2010.41.07%20PM.png)
+![wireframes](https://raw.githubusercontent.com/mincer-ray/jsgame/master/assets/devSS.png)
 
 ### Technologies
 
