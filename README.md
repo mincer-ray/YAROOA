@@ -2,7 +2,8 @@
 [easel]: http://www.createjs.com/easeljs
 [matter]: http://brm.io/matter-js/
 
-## You Are Running Out Of Air (YAROOA) : A Javascript Platformer
+![logo](https://raw.githubusercontent.com/mincer-ray/YAROOA/gh-pages/assets/logo.png)
+## A Javascript Platformer
 
 [YAROOA Live Version][live]
 
@@ -12,7 +13,7 @@ support system is running out of air! Your task is to do the following:
 
 ### Gameplay
 
-![screenshot](https://raw.githubusercontent.com/mincer-ray/jsgame/master/Screen%20Shot%202016-12-19%20at%2010.41.07%20PM.png)
+![screenshot](https://raw.githubusercontent.com/mincer-ray/YAROOA/gh-pages/assets/yarooaSS.png)
 
 Controls:
 - [ ] Press an Arrow Key once to fire your jetpack
