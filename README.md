@@ -34,6 +34,8 @@ interacting with the player.
 
 ### Implementation
 
+#### Physics and Rendering
+
 The initial challenge was learning how to use the Matter.js physics engine in my own javascript project. Matter has poor support for custom graphics, and I realized that if I wanted to use some animation and EaselJS I would need to create my own rendering engine to go along with Matter.
 
 At the heart of the game if the stage updater loop found in `game.js`:
@@ -52,6 +54,60 @@ updater () {
 The `collider` object handles the physics and hit detection of the game objects, and outputs positions of game objects with `Pos` functions. The `Pos` function coordinates are passed into the `render` object which adds, removes, and moves objects on the canvas accordingly.
 
 If the player picks up an air tank the `collider` will return a `pickupPos()` with a shorter length than the previously saved number in `game.js`. `checkPickups()` will add time to the timer and re-render the pickups that are left.
+
+#### Level system
+
+Every level in the game is stored in a unique file located in the `lib/maps` folder.
+
+Example map file:
+```javascript
+const map = {
+  cols: 16,
+  rows: 10,
+  title: "Bad Times",
+  time: 5,
+  tiles: [
+    [1.0,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.0]
+  ,[0.2,1.2,5.2,-1,6.2,6.2,9.1,-1,-1,-1,-1,-1,6.0,7.3,7.1,0.2]
+  ,[0.2,-1,5.2,1.3,3.3,0.4,1.3,2.3,2.0,-1,-1,-1,5.2,-1,5.7,0.2]
+  ,[3.1,2.0,5.2,-1,6.2,7.3,6.2,-1,1.1,2.3,2.3,2.3,2.3,2.3,2.3,4.1]
+  ,[3.1,3.2,2.3,2.3,3.3,-1,0.1,-1,-1,-1,5.2,-1,-1,-1,-1,0.2]
+  ,[0.2,-1,-1,-1,-1,-1,0.2,7.0,-1,-1,5.2,-1,-1,-1,-1,0.2]
+  ,[0.2,6.3,1.0,2.3,2.3,2.3,3.2,2.3,2.3,2.3,2.3,2.3,3.3,-1,-1,0.2]
+  ,[0.2,-1,0.3,-1,5.2,-1,5.2,-1,5.2,-1,5.2,-1,-1,-1,-1,0.2]
+  ,[0.2,-1,-1,-1,0.1,-1,0.1,-1,0.1,-1,0.1,-1,-1,-1,-1,0.2]
+  ,[1.1,2.3,2.3,2.3,3.2,2.3,3.2,2.3,3.2,2.3,3.2,2.3,2.3,2.3,2.3,2.1]
+  ],
+  collision: [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ,[1,1,0,0,0,0,2,0,0,5,0,0,0,0,0,1]
+    ,[1,0,0,1,9,4,9,1,1,0,0,0,0,0,3,1]
+    ,[1,1,0,0,0,0,0,5,1,1,1,1,1,1,1,1]
+    ,[1,1,1,1,9,0,9,0,0,0,0,0,0,0,0,1]
+    ,[1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1]
+    ,[1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1]
+    ,[1,0,1,0,5,0,0,0,5,0,0,0,0,0,0,1]
+    ,[1,0,0,0,1,2,1,0,1,2,1,0,0,0,0,1]
+    ,[1,1,1,9,1,1,1,1,1,1,1,1,1,1,1,1]
+  ],
+};
+
+module.exports = map;
+```
+External map files allow for easy creation of as many levels as the game designer wants. The file includes a tilemap for the rendering engine, a collision map for the physics engine, a title, a starting time, and the dimension of the map in tiles. The rending engine uses the `x.y` coordinates in the `tiles` array to selects a part of `yarooafinal.png` to create the EaselJS bitmap image for a specific tile. An online tile mapping tool was used to assist in designing the levels.
+
+The collision map uses the following key:
+- [] 1 for solid
+- [] 0 for empty
+- [] 4 for fuel leak spawner
+- [] 5 for debris spawner
+- [] 2 for air pickups
+- [] 9 is a special tile. In order to keep the screen from being flooded with pink
+fuel squares, the 9 tile removes any pink fuel piece it comes into contact with from
+the stage. This prevents the game from slowing down and breaking while maintaining
+the appearance of flowing liquid.
+
+The default tile size for the game is 32x32px with a map size of 16/10 but the game can be scaled to any tile or map size.
 
 ### Future Features
 
