@@ -1,52 +1,56 @@
+[live]: https://www.peterdegenaro.com/YAROOA
+[easel]: http://www.createjs.com/easeljs
+[matter]: http://brm.io/matter-js/
+
 ## You Are Running Out Of Air (YAROOA) : A Javascript Platformer
 
-### Basic Premise / Context For Running And Jumping
+[YAROOA Live Version][live]
 
 You Are Running Out Of Air is a platforming game about a spaceship that has just
 been hit by an asteroid! The pilot has to get to the escape pod, but his life
 support system is running out of air! Your task is to do the following:
 
-1) Jump from platform to platform
-2) Collect all the spare air tanks in the level
-3) Make it to the exit before the time runs out
+### Gameplay
 
+![screenshot](https://raw.githubusercontent.com/mincer-ray/jsgame/master/Screen%20Shot%202016-12-19%20at%2010.41.07%20PM.png)
 
-### MVP
+Controls:
+- [ ] Press an Arrow Key once to fire your jetpack
+- [ ] Press and hold an Arrow Key to Power Boost your jetpack
 
-The Player runs and jumps through a static screen of platforms, collecting (X) objects
-and reaching the end marker in (Y) time. The timer will be a restrictive as possible
-making the game a test of perfection in execution.
-
-At minimum this game will include:
-- [ ] A controllable player who can run and jump on platforms
-- [ ] Objects that the player can collect
-- [ ] A countdown timer that ends the game at 0
-- [ ] An exit that takes you to the next level
-- [ ] 4 to 5 levels that must be completed within a short time limit
-
-Ideally the game will also include:
-- [ ] Falling debris to dodge. Debris spawner objects that shoot junk in directions
-- [ ] Custom assets (potentially wait until week off when I have my desktop)
-
-### Wireframes
-
-![wireframes](https://raw.githubusercontent.com/mincer-ray/jsgame/master/Screen%20Shot%202016-12-19%20at%2010.41.07%20PM.png)
+Game Goals:
+1) Make it to the exit before the time runs out
+2) Collect extra air for more time
+3) Dodge falling debris and fuel tank leaks, they will slow you down!
 
 ### Technologies
 
-This project will be implemented with the following technologies:
+YAROOA is a javascript game built with two external libraries. The [EaselJS][easel]
+library was used for handling images and canvas rendering. The [Matter.js][matter]
+library was used to deal with the physics of the falling debris and fuel leaks
+interacting with the player.
 
-- Vanilla JavaScript for structure and game logic,
-- `Easel.js` with `HTML5 Canvas` for rendering and graphics,
-- `Matter.js` for jumping and debris physics
 
-Major components:
+### Implementation
 
-- Tile map to render levels. Will use Javascript and Canvas. Read good Mozilla docs already
-- Collision and jumping physics. Will use Matter collision and rigid bodies
-- Animation of player. Will use Easel sprite sheet animation if time allows.
+The initial challenge was learning how to use the Matter.js physics engine in my own javascript project. Matter has poor support for custom graphics, and I realized that if I wanted to use some animation and EaselJS I would need to create my own rendering engine to go along with Matter.
 
-### Implementation Timeline
+At the heart of the game if the stage updater loop found in game.js:
+```javascript
+updater () {
+  this.render.drawPlayer(this.collider.playerPos());
+  this.render.drawPickups(this.collider.pickupPos());
+  this.render.drawDebris(this.collider.debrisPos());
+  this.checkPickups(this.collider.pickupPos());
+  this.checkLevelEnd();
+  ...
+  requestAnimationFrame(this.updater.bind(this));
+}
+```
+
+The collider object handles the physics and hit detection of the game objects, and outputs positions of game objects with Pos functions. The Pos function coordinates are passed into the render object which adds, removes, and moves objects on the canvas accordingly.
+
+### Future Features
 
 **Day 1**: Setup Node modules. Write entry file. Get tile map working to draw levels:
 
@@ -54,22 +58,3 @@ Major components:
 - Get tile map functional
 - Create basic tile sheet
 - Make a decent tile map for first level and to write rest of game with
-
-**Day 2**: Focus on learning `Matter.js` for object physics. Implement moveable object
-for player and apply physics to player object. Add a timer:
-
-- Make the platform tile in the map solid
-- Give the player controls
-- Use `Matter.js` to create interesting gravity
-- Add timer to the stage
-
-**Day 3**: Add stationary collectible objects. Add Win condition. Add better assets.
-Add more levels. Add falling hazard objects if time allows:
-
-- Make collectible objects
-- Make level exit
-- Make level exit inactive unless all collectibles are picked up
-- Make game lose if timer hits 0
-- Add next level if won
-- Add levels by creating more tile maps
-- Different gravity for different levels would be neat
