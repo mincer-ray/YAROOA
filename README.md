@@ -20,9 +20,9 @@ Controls:
 - [ ] Press and hold an Arrow Key to Power Boost your jetpack
 
 Game Goals:
-1) Make it to the exit before the time runs out
-2) Collect extra air for more time
-3) Dodge falling debris and fuel tank leaks, they will slow you down!
+1. Make it to the exit before the time runs out
+2. Collect extra air for more time
+3. Dodge falling debris and fuel tank leaks, they will slow you down!
 
 ### Technologies
 
@@ -36,7 +36,7 @@ interacting with the player.
 
 The initial challenge was learning how to use the Matter.js physics engine in my own javascript project. Matter has poor support for custom graphics, and I realized that if I wanted to use some animation and EaselJS I would need to create my own rendering engine to go along with Matter.
 
-At the heart of the game if the stage updater loop found in game.js:
+At the heart of the game if the stage updater loop found in `game.js`:
 ```javascript
 updater () {
   this.render.drawPlayer(this.collider.playerPos());
@@ -49,13 +49,12 @@ updater () {
 }
 ```
 
-The collider object handles the physics and hit detection of the game objects, and outputs positions of game objects with Pos functions. The Pos function coordinates are passed into the render object which adds, removes, and moves objects on the canvas accordingly.
+The `collider` object handles the physics and hit detection of the game objects, and outputs positions of game objects with `Pos` functions. The `Pos` function coordinates are passed into the `render` object which adds, removes, and moves objects on the canvas accordingly.
+
+If the player picks up an air tank the `collider` will return a `pickupPos()` with a shorter length than the previously saved number in `game.js`. `checkPickups()` will add time to the timer and re-render the pickups that are left.
 
 ### Future Features
 
-**Day 1**: Setup Node modules. Write entry file. Get tile map working to draw levels:
-
-- `webpack` everything and have a page rendering
-- Get tile map functional
-- Create basic tile sheet
-- Make a decent tile map for first level and to write rest of game with
+- High scores calculated by shortest time to complete game
+- More levels
+- Music and sound effects
