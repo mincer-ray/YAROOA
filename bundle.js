@@ -80,6 +80,7 @@
 	  play (event) {
 	    if (event.keyCode === 32) {
 	      event.preventDefault();
+	      $(window).off();
 	      this.updater = this.updater.bind(this);
 	      this.clockInterval = window.setInterval(this.clock.bind(this), 10);
 	      this.nextLevel();
